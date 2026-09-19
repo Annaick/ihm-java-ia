@@ -3,23 +3,22 @@ package com.horizonimmo.config;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
- * Configuration de l'integration x.ai Voice Agent.
+ * Configuration de l'integration x.ai Voice Agent Builder.
  *
- * La cle d'API (xai.api-key) doit etre fournie via la variable
- * d'environnement XAI_API_KEY (voir deploy/horizon-immo.env sur le
- * serveur) — jamais commitee dans le code.
+ * L'agent (instructions, voix, outils "API Request" vers notre propre API)
+ * est configure dans le tableau de bord x.ai (console.x.ai/voice/agents),
+ * pas dans ce code. Ce backend se contente de relayer la connexion
+ * WebSocket du navigateur vers x.ai en gardant la cle secrete cote serveur.
+ *
+ * xai.api-key -> variable d'environnement XAI_API_KEY
+ * xai.agent-id -> variable d'environnement XAI_AGENT_ID
+ * (voir deploy/horizon-immo.env sur le serveur — jamais commitees dans le code)
  */
 @ConfigurationProperties(prefix = "xai")
 public class XaiProperties {
 
-    /** Cle secrete x.ai, utilisee uniquement cote serveur. */
     private String apiKey;
-
-    /** Modele vocal temps reel a utiliser. */
-    private String model = "grok-voice-latest";
-
-    /** Voix de l'agent. */
-    private String voice = "eve";
+    private String agentId;
 
     public String getApiKey() {
         return apiKey;
@@ -29,23 +28,15 @@ public class XaiProperties {
         this.apiKey = apiKey;
     }
 
-    public String getModel() {
-        return model;
+    public String getAgentId() {
+        return agentId;
     }
 
-    public void setModel(String model) {
-        this.model = model;
-    }
-
-    public String getVoice() {
-        return voice;
-    }
-
-    public void setVoice(String voice) {
-        this.voice = voice;
+    public void setAgentId(String agentId) {
+        this.agentId = agentId;
     }
 
     public boolean isConfigured() {
-        return apiKey != null && !apiKey.isBlank();
+        return apiKey != null && !apiKey.isBlank() && agentId != null && !agentId.isBlank();
     }
 }

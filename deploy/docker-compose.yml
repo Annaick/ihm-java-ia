@@ -14,7 +14,7 @@ services:
     # Bound to loopback only; Caddy (host) terminates TLS and reverse-proxies.
     ports:
       - "127.0.0.1:8081:8080"
-    # XAI_API_KEY set via deploy/horizon-immo.env (see deploy/README.md).
+    # XAI_API_KEY / XAI_AGENT_ID set via deploy/horizon-immo.env (see deploy/README.md).
     env_file:
       - path: horizon-immo.env
         required: false

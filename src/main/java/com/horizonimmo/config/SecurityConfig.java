@@ -37,7 +37,7 @@ public class SecurityConfig {
                 // pas de session : on la laisse ouverte et hors CSRF.
                 .csrf(csrf -> csrf.ignoringRequestMatchers("/api/**"))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/annonces", "/annonces/**", "/css/**", "/js/**", "/img/**", "/api/**").permitAll()
+                        .requestMatchers("/", "/annonces", "/annonces/**", "/css/**", "/js/**", "/img/**", "/api/**", "/ws/**").permitAll()
                         .requestMatchers("/backoffice/login").permitAll()
                         .requestMatchers("/backoffice/**").authenticated()
                         .anyRequest().permitAll())
