@@ -137,3 +137,63 @@
   (`ihm/design export/`).
 - Mettre en place le pipeline Jenkins (build Maven + déploiement sur le
   serveur perso, domaine immobilier.anaick.com).
+
+## 2026-09-19 (auth, style, intégration x.ai, déploiement)
+
+- **Authentification backoffice** : Spring Security, compte agent seedé au
+  démarrage (`AdminSeeder`) — `admin@immobilier.anaick.com` / `1234567890`
+  (mot de passe volontairement simple pour la démo). Page de login stylée,
+  déconnexion, protection CSRF vérifiée (login OK, mauvais mot de passe
+  rejeté, logout OK).
+- **Style** aligné sur le design Figma exporté : palette violette, hero
+  deux colonnes avec badge "actif 24h/24", cartes de réassurance, sidebar
+  backoffice, chips de statut.
+- **Widget agent vocal x.ai** implémenté (`static/js/voice-agent.js`) selon
+  le protocole officiel (vérifié sur docs.x.ai) :
+  - Backend `POST /api/xai/session` échange `XAI_API_KEY` contre un jeton
+    éphémère (`https://api.x.ai/v1/realtime/client_secrets`), jamais exposé
+    au navigateur.
+  - Frontend : WebSocket `wss://api.x.ai/v1/realtime`, capture micro
+    (resampling 24kHz, PCM16), lecture audio, function calling
+    (`rechercher_biens` → `/api/properties`, `creer_rendez_vous` →
+    `/api/leads`).
+  - **Non vérifiable sans clé API réelle** : les noms exacts des événements
+    de transcript texte ne sont pas entièrement documentés publiquement ;
+    le code gère les motifs les plus probables mais est à ajuster après un
+    premier test réel (onglet Réseau du navigateur) une fois la clé
+    branchée.
+- **Déploiement** effectué sur le serveur perso (`ssh oracle`), en suivant
+  exactement la convention des autres projets (`~/apps/<projet>/`,
+  `Dockerfile` + `deploy/docker-compose.yml` + `deploy/Jenkinsfile`,
+  Caddy `<projet>.anaick.com → reverse_proxy 127.0.0.1:<port>`) :
+  - Repo cloné dans `~/apps/horizon-immo`, image Docker buildée, conteneur
+    `horizon-immo` lancé sur `127.0.0.1:8081` (volume nommé pour persister
+    la base SQLite entre les redéploiements).
+  - Bloc Caddy `immobilier.anaick.com` ajouté et rechargé.
+  - **https://immobilier.anaick.com est en ligne** (testé, 200, HTTPS
+    provisionné automatiquement).
+  - **Job Jenkins non créé** : bloqué par le mode sandbox de Claude Code, qui
+    interdit la lecture des fichiers de credentials/config Jenkins
+    (`CREDENTIALS.txt`, `casc.yaml`, secrets montés dans le conteneur) —
+    protection volontaire, non contournée. Voir section "À faire par
+    l'utilisateur" ci-dessous.
+
+## À faire par l'utilisateur
+
+1. **Brancher la clé x.ai** : sur le serveur, créer
+   `~/apps/horizon-immo/deploy/horizon-immo.env` avec `XAI_API_KEY=xai-...`,
+   puis `docker compose -p horizon-immo -f deploy/docker-compose.yml up -d`
+   pour relancer le conteneur avec la clé. Tester ensuite le widget vocal
+   dans un vrai navigateur (micro + son) et ajuster si besoin les noms
+   d'événements de transcript dans `voice-agent.js` (voir commentaire en
+   tête du fichier).
+2. **Créer le job Jenkins "horizon-immo"** (via l'UI `https://jenkins.anaick.com`,
+   identifiants dans `~/apps/jenkins/CREDENTIALS.txt`) : New Item → Pipeline
+   → repo `git@github.com:Annaick/ihm-java-ia.git` (credential `github-ssh`
+   déjà existant), branche `main`, "Pipeline script from SCM",
+   `deploy/Jenkinsfile`. Copier le token distant depuis
+   `~/apps/jenkins/secrets/DEPLOY_TOKEN` dans "Trigger builds remotely" pour
+   retrouver l'URL `https://jenkins.anaick.com/buildByToken/build?job=horizon-immo&token=...`
+   comme pour les autres projets.
+3. Changer le mot de passe admin backoffice avant tout usage réel (fait pour
+   la démo, pas pour la prod).

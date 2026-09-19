@@ -53,16 +53,23 @@ l'agence.
 
 ## Déploiement
 
-- Serveur personnel de l'utilisateur, accessible via `ssh oracle`.
-- Domaine **immobilier.anaick.com** déjà redirigé vers ce serveur par
-  l'utilisateur.
-- **Jenkins déjà installé sur le serveur** — à utiliser pour le pipeline
-  CI/CD une fois le projet Java amorcé (build + déploiement automatique sur
-  push).
-- Avant de configurer quoi que ce soit d'autre sur le serveur : observer
-  comment les autres projets persos y sont déployés (reverse proxy, process
-  manager, certificats) pour rester cohérent, plutôt que de réinventer une
-  convention.
+- **Déployé et en ligne** : https://immobilier.anaick.com (serveur perso,
+  `ssh oracle`).
+- Convention du serveur (observée sur les autres projets perso avant de
+  déployer) : chaque projet vit dans `~/apps/<projet>/`, avec un
+  `Dockerfile` à la racine et `deploy/docker-compose.yml` +
+  `deploy/Jenkinsfile` + `deploy/README.md`. Caddy (hôte, pas dockerisé)
+  route `<projet>.anaick.com` vers `127.0.0.1:<port>` via
+  `/etc/caddy/Caddyfile`.
+- horizon-immo : conteneur `horizon-immo` sur `127.0.0.1:8081`, volume
+  Docker nommé pour persister la base SQLite entre les redéploiements.
+- **Jenkins** est dockerisé sur le serveur (`~/apps/jenkins/`,
+  `jenkins.anaick.com`) mais **le job "horizon-immo" n'a pas pu être créé
+  par Claude** : le mode sandbox bloque la lecture des fichiers de
+  credentials/config Jenkins (protection volontaire). À créer manuellement
+  par l'utilisateur — voir `PROGRESS.md` § "À faire par l'utilisateur" pour
+  la marche à suivre exacte. En attendant, redéploiement manuel :
+  `cd ~/apps/horizon-immo && git pull && docker compose -p horizon-immo -f deploy/docker-compose.yml up -d --build`.
 
 ## Livrables
 
@@ -70,9 +77,12 @@ l'agence.
    parcours utilisateur, en français.
 2. Maquettes / design (fait, généré par l'agent IA de Figma à partir de
    `ihm/brief-design-figma-ai.md`, export dans `ihm/design export/`).
-3. Code Java (Java + SQLite) du site vitrine + backoffice.
-4. Intégration de l'agent vocal x.ai + connexion à la prise de RDV.
-5. Pipeline Jenkins pour le déploiement sur le serveur perso.
+3. Code Java (fait) — Spring Boot + SQLite, site vitrine + backoffice avec
+   authentification (voir Structure du code).
+4. Intégration de l'agent vocal x.ai (fait côté code, **pas encore testée
+   avec une vraie clé** — voir `PROGRESS.md`).
+5. Déploiement (fait) — https://immobilier.anaick.com. Pipeline Jenkins
+   encore à créer manuellement (voir ci-dessus).
 
 ## Méthode de travail
 
