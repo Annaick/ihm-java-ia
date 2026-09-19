@@ -1,0 +1,33 @@
+# Secrets
+.env
+.env.*
+*.pem
+
+# Java (Maven)
+target/
+*.class
+
+# Java (Gradle)
+.gradle/
+build/
+
+# SQLite runtime databases (keep schema/migrations, not runtime data)
+*.db
+*.sqlite
+*.sqlite3
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Excel lock files
+~$*.xlsx
+
+# Node (if the exported site uses a JS toolchain)
+node_modules/
+dist/
