@@ -2,36 +2,34 @@
    TOKENS — primitive -> semantic -> component
    ============================================================ */
 :root {
-  /* Primitive */
-  --violet-800: #3c2b73;
-  --violet-700: #4d3592;
-  --violet-500: #6c4fd6;
-  --violet-100: #ece6fb;
-  --terracotta-700: #a8502a;
-  --terracotta-600: #c96536;
-  --terracotta-500: #dd7a46;
-  --terracotta-100: #fbe6d8;
-  --cream-50: #fbf8f3;
-  --cream-100: #f4efe6;
+  /* Primitive — orange + beige, brown for dark contrast (no violet) */
+  --brown-900: #3a2a1c;
+  --brown-700: #6b4a2e;
+  --brown-100: #efe3d2;
+  --orange-700: #b65a22;
+  --orange-600: #e07b34;
+  --orange-100: #fbe3cc;
+  --beige-50: #fbf3e7;
+  --beige-100: #f2e6d3;
+  --beige-300: #e4d3b8;
   --charcoal-900: #2a2420;
   --charcoal-600: #6e6357;
-  --sand-200: #e7ddcd;
   --green-600: #2f8f5b;
   --green-100: #def2e6;
 
   /* Semantic */
-  --color-brand: var(--violet-700);
-  --color-brand-strong: var(--violet-800);
-  --color-brand-soft: var(--violet-100);
-  --color-accent: var(--terracotta-600);
-  --color-accent-strong: var(--terracotta-700);
-  --color-accent-soft: var(--terracotta-100);
-  --color-bg: var(--cream-50);
+  --color-brand: var(--brown-700);
+  --color-brand-strong: var(--brown-900);
+  --color-brand-soft: var(--brown-100);
+  --color-accent: var(--orange-600);
+  --color-accent-strong: var(--orange-700);
+  --color-accent-soft: var(--orange-100);
+  --color-bg: var(--beige-50);
   --color-surface: #ffffff;
-  --color-surface-alt: var(--cream-100);
+  --color-surface-alt: var(--beige-100);
   --color-text: var(--charcoal-900);
   --color-text-muted: var(--charcoal-600);
-  --color-border: var(--sand-200);
+  --color-border: var(--beige-300);
   --color-success: var(--green-600);
   --color-success-soft: var(--green-100);
 
@@ -41,10 +39,11 @@
   --radius-lg: 24px;
   --shadow-sm: 0 2px 8px rgba(42, 36, 32, 0.06);
   --shadow-md: 0 12px 32px rgba(42, 36, 32, 0.12);
-  --shadow-brand: 0 10px 28px rgba(77, 53, 146, 0.25);
-  --shadow-accent: 0 10px 28px rgba(201, 101, 54, 0.3);
+  --shadow-brand: 0 10px 28px rgba(58, 42, 28, 0.25);
+  --shadow-accent: 0 10px 28px rgba(224, 123, 52, 0.35);
   --font-display: "Fraunces", Georgia, "Times New Roman", serif;
   --font-body: "Segoe UI", system-ui, Arial, sans-serif;
+  --header-height: 76px;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -77,15 +76,35 @@ h1, h2, h3, h4 {
 }
 
 /* ============================================================
-   APP BAR
+   APP BAR — floating, shrinks to full-width on scroll
    ============================================================ */
 .app-bar {
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  right: 16px;
+  z-index: 100;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 18px 40px;
-  background: var(--color-surface);
-  border-bottom: 1px solid var(--color-border);
+  padding: 14px 28px;
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-radius: 999px;
+  box-shadow: var(--shadow-md);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  transition: top 0.25s ease, left 0.25s ease, right 0.25s ease,
+    border-radius 0.25s ease, background 0.25s ease, box-shadow 0.25s ease;
+}
+
+.app-bar.scrolled {
+  top: 0;
+  left: 0;
+  right: 0;
+  border-radius: 0;
+  background: rgba(255, 255, 255, 0.97);
+  box-shadow: var(--shadow-sm);
 }
 
 .app-bar .logo {
@@ -94,17 +113,22 @@ h1, h2, h3, h4 {
   gap: 10px;
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: 1.3rem;
+  font-size: 1.25rem;
   color: var(--color-brand-strong);
   text-decoration: none;
 }
 
 .app-bar .logo i {
   color: var(--color-accent);
-  font-size: 1.2rem;
+  font-size: 1.15rem;
 }
 
-.app-bar nav a {
+.app-bar nav {
+  display: flex;
+  align-items: center;
+}
+
+.app-bar nav a:not(.btn) {
   margin-left: 28px;
   text-decoration: none;
   color: var(--color-text);
@@ -112,7 +136,7 @@ h1, h2, h3, h4 {
   position: relative;
 }
 
-.app-bar nav a::after {
+.app-bar nav a:not(.btn)::after {
   content: "";
   position: absolute;
   left: 0;
@@ -123,8 +147,15 @@ h1, h2, h3, h4 {
   transition: width 0.2s ease;
 }
 
-.app-bar nav a:hover::after {
+.app-bar nav a:not(.btn):hover::after {
   width: 100%;
+}
+
+.app-bar nav .btn {
+  margin-left: 28px;
+  padding: 10px 20px;
+  font-size: 0.88rem;
+  box-shadow: none;
 }
 
 /* ============================================================
@@ -135,9 +166,9 @@ h1, h2, h3, h4 {
   min-height: 560px;
   display: flex;
   align-items: center;
-  padding: 64px 40px 120px;
+  padding: 140px 40px 120px;
   background:
-    linear-gradient(180deg, rgba(30, 20, 46, 0.35) 0%, rgba(24, 16, 38, 0.72) 100%),
+    linear-gradient(180deg, rgba(38, 25, 14, 0.4) 0%, rgba(28, 18, 10, 0.75) 100%),
     url("/img/hero-villa.jpg") center/cover no-repeat;
   animation: fade-up 0.6s ease both;
 }
@@ -286,7 +317,7 @@ h1, h2, h3, h4 {
 .btn:hover {
   background: var(--color-accent-strong);
   transform: translateY(-2px);
-  box-shadow: 0 14px 32px rgba(201, 101, 54, 0.38);
+  box-shadow: 0 14px 32px rgba(182, 90, 34, 0.4);
 }
 
 .btn.secondary {
@@ -308,7 +339,7 @@ h1, h2, h3, h4 {
 .reassurance {
   max-width: 1240px;
   margin: 0 auto;
-  padding: 0 40px 56px;
+  padding: 56px 40px;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: 20px;
@@ -460,7 +491,7 @@ main {
    CATALOGUE — sidebar de filtres + liste d'annonces
    ============================================================ */
 .catalog-header {
-  padding: 40px;
+  padding: 116px 40px 40px;
   background: var(--color-brand-strong);
   color: #fff;
 }
@@ -689,7 +720,7 @@ main {
 .detail-hero .overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgba(20, 14, 32, 0.1) 40%, rgba(20, 14, 32, 0.75) 100%);
+  background: linear-gradient(180deg, rgba(28, 18, 10, 0.1) 40%, rgba(28, 18, 10, 0.78) 100%);
   display: flex;
   align-items: flex-end;
   padding: 32px 40px;
