@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: pagehead('Catalogue de biens')}"></head>
+<body>
+<div class="backoffice-shell">
+    <nav class="backoffice-nav" th:replace="~{backoffice/nav :: nav('biens')}"></nav>
+    <div class="backoffice-content">
+        <div class="section-header">
+            <h1 class="section-title">Catalogue de biens</h1>
+            <a class="btn" th:href="@{/backoffice/biens/nouveau}"><i class="bi bi-plus-lg"></i> Ajouter un bien</a>
+        </div>
+
+        <table class="leads">
+            <thead>
+            <tr>
+                <th>Bien</th>
+                <th>Ville</th>
+                <th>Transaction</th>
+                <th>Prix</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="p : ${properties}">
+                <td th:text="${p.title}">Titre</td>
+                <td th:text="${p.city} + ' · ' + ${p.zone}">Ville</td>
+                <td th:text="${p.transactionType}">Transaction</td>
+                <td th:text="${#numbers.formatInteger(p.price, 1, 'WHITESPACE')} + ' €'">Prix</td>
+                <td>
+                    <a th:href="@{/backoffice/biens/{id}/modifier(id=${p.id})}"><i class="bi bi-pencil-square"></i> Modifier</a>
+                    &nbsp;·&nbsp;
+                    <a th:href="@{/annonces/{id}(id=${p.id})}" target="_blank"><i class="bi bi-box-arrow-up-right"></i> Voir</a>
+                    &nbsp;·&nbsp;
+                    <form th:action="@{/backoffice/biens/{id}/supprimer(id=${p.id})}" method="post" style="display:inline;">
+                        <button type="submit" style="background:none;border:none;color:#a3213a;cursor:pointer;padding:0;font:inherit;">
+                            <i class="bi bi-trash"></i> Supprimer
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            <tr th:if="${properties.isEmpty()}">
+                <td colspan="5">Aucun bien dans le catalogue pour le moment.</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>

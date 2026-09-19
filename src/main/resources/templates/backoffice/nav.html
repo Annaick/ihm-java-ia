@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<nav class="backoffice-nav" th:fragment="nav(active)">
+    <div class="logo"><i class="bi bi-house-door-fill"></i> Horizon Immo</div>
+    <a th:href="@{/backoffice}" th:classappend="${active == 'leads'} ? 'active'">
+        <i class="bi bi-people-fill"></i> Leads
+    </a>
+    <a th:href="@{/backoffice/biens}" th:classappend="${active == 'biens'} ? 'active'">
+        <i class="bi bi-houses-fill"></i> Catalogue de biens
+    </a>
+    <a th:href="@{/backoffice/disponibilites}" th:classappend="${active == 'disponibilites'} ? 'active'">
+        <i class="bi bi-calendar-week-fill"></i> Disponibilités
+    </a>
+    <a th:href="@{/}"><i class="bi bi-box-arrow-up-right"></i> Retour au site</a>
+    <form method="post" th:action="@{/backoffice/logout}">
+        <button type="submit"><i class="bi bi-box-arrow-right"></i> Se déconnecter</button>
+    </form>
+</nav>
+</body>
+</html>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: pagehead(${property.id} == null ? 'Nouveau bien' : 'Modifier le bien')}"></head>
+<body>
+<div class="backoffice-shell">
+    <nav class="backoffice-nav" th:replace="~{backoffice/nav :: nav('biens')}"></nav>
+    <div class="backoffice-content">
+        <h1 class="section-title" th:text="${property.id} == null ? 'Ajouter un bien' : 'Modifier le bien'">Bien</h1>
+
+        <form class="lead-detail-card" method="post" th:action="@{/backoffice/biens}" style="max-width:640px;">
+            <input type="hidden" name="id" th:value="${property.id}"/>
+
+            <div class="field" style="margin-bottom:14px;">
+                <label>Titre</label>
+                <input type="text" name="title" th:value="${property.title}" required
+                       style="width:100%;padding:9px 12px;border-radius:8px;border:1px solid var(--color-border);"/>
+            </div>
+
+            <div class="field" style="margin-bottom:14px;">
+                <label>Transaction</label>
+                <select name="transactionType" required style="width:100%;padding:9px 12px;border-radius:8px;border:1px solid var(--color-border);">
+                    <option value="VENTE" th:selected="${property.transactionType != null and property.transactionType.name() == 'VENTE'}">Vente</option>
+                    <option value="LOCATION" th:selected="${property.transactionType != null and property.transactionType.name() == 'LOCATION'}">Location</option>
+                </select>
+            </div>
+
+            <div class="field" style="margin-bottom:14px;">
+                <label>Type de bien</label>
+                <input type="text" name="propertyType" th:value="${property.propertyType}" placeholder="MAISON, APPARTEMENT, STUDIO..." required
+                       style="width:100%;padding:9px 12px;border-radius:8px;border:1px solid var(--color-border);"/>
+            </div>
+
+            <div class="field" style="margin-bottom:14px;">
+                <label>Prix (€)</label>
+                <input type="number" name="price" th:value="${property.price}" required
+                       style="width:100%;padding:9px 12px;border-radius:8px;border:1px solid var(--color-border);"/>
+            </div>
+
+            <div class="field" style="margin-bottom:14px;">
+                <label>Ville</label>
+                <input type="text" name="city" th:value="${property.city}" required
+                       style="width:100%;padding:9px 12px;border-radius:8px;border:1px solid var(--color-border);"/>
+            </div>
+
+            <div class="field" style="margin-bottom:14px;">
+                <label>Quartier / zone</label>
+                <input type="text" name="zone" th:value="${property.zone}" required
+                       style="width:100%;padding:9px 12px;border-radius:8px;border:1px solid var(--color-border);"/>
+            </div>
+
+            <div class="field" style="margin-bottom:14px;">
+                <label>Pièces</label>
+                <input type="number" name="rooms" th:value="${property.rooms}" required
+                       style="width:100%;padding:9px 12px;border-radius:8px;border:1px solid var(--color-border);"/>
+            </div>
+
+            <div class="field" style="margin-bottom:14px;">
+                <label>Surface (m²)</label>
+                <input type="number" step="0.1" name="surface" th:value="${property.surface}" required
+                       style="width:100%;padding:9px 12px;border-radius:8px;border:1px solid var(--color-border);"/>
+            </div>
+
+            <div class="field" style="margin-bottom:14px;">
+                <label>Photo (chemin dans /img/... ou URL)</label>
+                <input type="text" name="photoUrl" th:value="${property.photoUrl}" placeholder="/img/properties/mon-bien.jpg" required
+                       style="width:100%;padding:9px 12px;border-radius:8px;border:1px solid var(--color-border);"/>
+            </div>
+
+            <div class="field" style="margin-bottom:14px;">
+                <label>Description</label>
+                <textarea name="description" rows="4" required
+                          style="width:100%;padding:9px 12px;border-radius:8px;border:1px solid var(--color-border);font-family:inherit;" th:text="${property.description}"></textarea>
+            </div>
+
+            <div class="actions">
+                <button class="btn" type="submit"><i class="bi bi-check2"></i> Enregistrer</button>
+                <a class="btn secondary" th:href="@{/backoffice/biens}">Annuler</a>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>

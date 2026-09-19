@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: pagehead('Disponibilités')}"></head>
+<body>
+<div class="backoffice-shell">
+    <nav class="backoffice-nav" th:replace="~{backoffice/nav :: nav('disponibilites')}"></nav>
+    <div class="backoffice-content">
+        <div class="section-header">
+            <h1 class="section-title">Disponibilités pour les rendez-vous</h1>
+        </div>
+        <p style="color:var(--color-text-muted);margin-top:-8px;">
+            Ces horaires sont utilisés par l'agent vocal (via <code>/api/disponibilites</code>)
+            pour proposer des créneaux de rendez-vous cohérents avec l'ouverture de l'agence.
+        </p>
+
+        <form method="post" th:action="@{/backoffice/disponibilites}">
+            <table class="leads">
+                <thead>
+                <tr>
+                    <th>Jour</th>
+                    <th>Ouvert</th>
+                    <th>Début</th>
+                    <th>Fin</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="a : ${availabilities}">
+                    <td>
+                        <input type="hidden" name="id" th:value="${a.id}"/>
+                        <span th:text="${a.dayOfWeek}">JOUR</span>
+                    </td>
+                    <td>
+                        <input type="checkbox" name="activeDays" th:value="${a.dayOfWeek}" th:checked="${a.active}"/>
+                    </td>
+                    <td>
+                        <input type="time" name="startTime" th:value="${a.startTime}"/>
+                    </td>
+                    <td>
+                        <input type="time" name="endTime" th:value="${a.endTime}"/>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+            <div class="actions">
+                <button class="btn" type="submit"><i class="bi bi-check2"></i> Enregistrer</button>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>

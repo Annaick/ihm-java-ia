@@ -3,14 +3,7 @@
 <head th:replace="~{fragments/layout :: pagehead('Detail du lead')}"></head>
 <body>
 <div class="backoffice-shell">
-    <nav class="backoffice-nav">
-        <div class="logo"><i class="bi bi-house-door-fill"></i> Horizon Immo</div>
-        <a class="active" th:href="@{/backoffice}"><i class="bi bi-people-fill"></i> Leads</a>
-        <a th:href="@{/}"><i class="bi bi-box-arrow-up-right"></i> Retour au site</a>
-        <form method="post" th:action="@{/backoffice/logout}">
-            <button type="submit"><i class="bi bi-box-arrow-right"></i> Se déconnecter</button>
-        </form>
-    </nav>
+    <nav class="backoffice-nav" th:replace="~{backoffice/nav :: nav('leads')}"></nav>
     <div class="backoffice-content">
         <h1 class="section-title" th:text="${lead.prospectName}">Nom du prospect</h1>
 

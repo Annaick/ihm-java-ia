@@ -47,4 +47,16 @@ public class PropertyService {
                 .sorted()
                 .toList();
     }
+
+    public List<Property> findAll() {
+        return propertyRepository.findAll();
+    }
+
+    public Property save(Property property) {
+        return propertyRepository.save(property);
+    }
+
+    public void deleteById(Long id) {
+        propertyRepository.deleteById(id);
+    }
 }
