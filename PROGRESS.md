@@ -240,3 +240,62 @@
   demande de l'utilisateur).
 - Toujours en attente : clé x.ai, job Jenkins (voir "À faire par
   l'utilisateur" ci-dessus).
+
+## 2026-09-19 (palette orange/beige, header flottant)
+
+- Violet retiré partout, remplacé par orange + beige + brun (tokens CSS
+  primitifs/semantiques renommés).
+- Header devenu flottant (pilule inset en haut de page, `position: fixed`),
+  se transforme en barre plein-largeur au scroll via `static/js/site.js`.
+  Bouton "Parler à un spécialiste" (icône casque) ajouté dans le header.
+- Corrigé le chevauchement barre de recherche / cartes de réassurance.
+
+## 2026-09-19 (agent vocal x.ai — architecture Voice Agent Builder)
+
+- **Changement d'architecture important** : l'utilisateur a montré que
+  x.ai propose un vrai console no-code, **Voice Agent Builder**
+  (console.x.ai/voice/agents), où l'agent (instructions, voix, outils
+  "API Request") se configure dans un tableau de bord, pas dans notre code.
+  On est passés de l'ancienne approche (jeton éphémère + tool-calling géré
+  par le JS du navigateur) à un **proxy WebSocket côté serveur**
+  (`VoiceProxyHandler`) : le navigateur se connecte à `/ws/voice` sur notre
+  propre serveur, qui relaie vers `wss://api.x.ai/v1/realtime?agent_id=...`
+  avec la clé API en header `Authorization` (jamais exposée au client).
+  Les outils de l'agent appellent **directement** nos endpoints publics
+  (`/api/properties`, `/api/leads`, `/api/disponibilites`) — plus besoin de
+  logique de function-calling côté navigateur.
+- `XaiProperties` simplifié : `xai.api-key` (`XAI_API_KEY`) + `xai.agent-id`
+  (`XAI_AGENT_ID`). `XaiSessionController` supprimé, remplacé par
+  `XaiConfigController` (juste `{configured: bool}`).
+- **L'agent lui-même doit être créé par l'utilisateur** dans le dashboard
+  x.ai (accès à son compte requis) — instructions et config des outils
+  fournies dans le chat, à coller telles quelles. Voir aussi
+  `deploy/README.md` pour l'emplacement exact de `XAI_API_KEY` /
+  `XAI_AGENT_ID` sur le serveur.
+- Non testé en conditions réelles (pas encore de clé/agent_id fournis) —
+  les noms exacts de certains événements de transcript restent à valider
+  au premier essai (voir commentaire en tête de `voice-agent.js`).
+
+## 2026-09-19 (backoffice : catalogue dynamique + disponibilités)
+
+- **Gestion du catalogue** (`/backoffice/biens`) : CRUD complet (créer,
+  modifier, supprimer un bien). Modifier ici met a jour en temps réel le
+  site vitrine ET l'API que l'agent vocal interroge.
+- **Disponibilités** (`/backoffice/disponibilites`) : 7 jours seedés par
+  défaut (lundi-samedi 9h-19h, dimanche fermé), modifiables, exposés via
+  `GET /api/disponibilites` pour que l'agent vocal propose des créneaux
+  cohérents avec les horaires réels de l'agence.
+- Navigation backoffice factorisée dans `backoffice/nav.html`.
+- Testé de bout en bout (création/modification/suppression d'un bien,
+  vérifié immédiatement sur `/api/properties`).
+- Déployé en production.
+
+## Prochaine étape
+
+- L'utilisateur doit créer l'agent dans console.x.ai/voice/agents avec les
+  instructions et les 3 outils "API Request" fournis dans le chat, puis
+  renseigner `XAI_API_KEY` et `XAI_AGENT_ID` dans
+  `deploy/horizon-immo.env` sur le serveur et redéployer.
+- Tester l'agent vocal en conditions réelles une fois configuré, ajuster
+  `voice-agent.js` si les noms d'événements de transcript diffèrent de ce
+  qui est anticipé.
