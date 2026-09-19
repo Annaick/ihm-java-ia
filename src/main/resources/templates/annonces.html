@@ -4,35 +4,88 @@
 <body>
 <header th:replace="~{fragments/layout :: appbar}"></header>
 
-<main>
-    <h2 class="section-title">Toutes nos annonces</h2>
+<div class="catalog-header">
+    <h1>Toutes nos annonces</h1>
+    <p th:text="${properties.size()} + ' bien(s) trouvé(s)'">N biens trouvés</p>
+</div>
 
-    <form class="filter-bar" method="get" th:action="@{/annonces}">
-        <select name="transactionType">
-            <option value="">Achat ou location</option>
-            <option value="VENTE" th:selected="${transactionType != null and transactionType.name() == 'VENTE'}">Achat</option>
-            <option value="LOCATION" th:selected="${transactionType != null and transactionType.name() == 'LOCATION'}">Location</option>
-        </select>
-        <input type="text" name="zone" placeholder="Quartier" th:value="${zone}"/>
-        <input type="text" name="propertyType" placeholder="Type de bien" th:value="${propertyType}"/>
-        <input type="number" name="maxPrice" placeholder="Budget max" th:value="${maxPrice}"/>
-        <button class="btn secondary" type="submit">Filtrer</button>
-    </form>
+<div class="catalog">
+    <aside>
+        <div class="filter-widget">
+            <h4><i class="bi bi-sliders"></i> Affiner la recherche</h4>
+            <form method="get" th:action="@{/annonces}">
+                <div class="field">
+                    <label>Transaction</label>
+                    <select name="transactionType">
+                        <option value="">Achat ou location</option>
+                        <option value="VENTE" th:selected="${transactionType != null and transactionType.name() == 'VENTE'}">Achat</option>
+                        <option value="LOCATION" th:selected="${transactionType != null and transactionType.name() == 'LOCATION'}">Location</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label>Quartier</label>
+                    <input type="text" name="zone" placeholder="Ex. Croix-Rousse" th:value="${zone}"/>
+                </div>
+                <div class="field">
+                    <label>Budget maximum</label>
+                    <input type="number" name="maxPrice" placeholder="Sans limite" th:value="${maxPrice}"/>
+                </div>
+                <input type="hidden" name="propertyType" th:value="${propertyType}"/>
+                <button class="btn secondary" type="submit" style="width:100%;justify-content:center;">
+                    <i class="bi bi-funnel-fill"></i> Filtrer
+                </button>
+            </form>
+        </div>
 
-    <div class="property-grid">
-        <div class="property-card" th:each="p : ${properties}">
-            <img th:src="${p.photoUrl}" alt=""/>
+        <div class="filter-widget">
+            <h4><i class="bi bi-house-door-fill"></i> Types de biens</h4>
+            <ul class="type-list">
+                <li>
+                    <a th:href="@{/annonces(transactionType=${transactionType}, zone=${zone}, maxPrice=${maxPrice})}"
+                       th:classappend="${propertyType == null or propertyType.isEmpty()} ? 'active'">
+                        <i class="bi bi-chevron-right"></i> Tous les types
+                    </a>
+                </li>
+                <li th:each="t : ${propertyTypes}">
+                    <a th:href="@{/annonces(transactionType=${transactionType}, zone=${zone}, maxPrice=${maxPrice}, propertyType=${t})}"
+                       th:classappend="${propertyType != null and propertyType.equalsIgnoreCase(t)} ? 'active'">
+                        <i class="bi bi-chevron-right"></i> <span th:text="${t}">Type</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </aside>
+
+    <div class="listing-list">
+        <a class="listing-card" th:each="p : ${properties}" th:href="@{/annonces/{id}(id=${p.id})}">
+            <div class="media">
+                <img th:src="${p.photoUrl}" alt=""/>
+                <span class="tag" th:text="${p.transactionType.name() == 'VENTE'} ? 'À vendre' : 'À louer'">Tag</span>
+            </div>
             <div class="content">
                 <h3 th:text="${p.title}">Titre du bien</h3>
-                <div class="price" th:text="${p.price} + ' €'">Prix</div>
-                <div class="meta" th:text="${p.city} + ' · ' + ${p.zone} + ' · ' + ${p.rooms} + ' pièces · ' + ${p.surface} + ' m²'">
-                    Meta
+                <div class="location">
+                    <i class="bi bi-geo-alt-fill"></i>
+                    <span th:text="${p.city} + ' · ' + ${p.zone}">Ville</span>
+                </div>
+                <div class="facts">
+                    <span><i class="bi bi-door-open"></i> <span th:text="${p.rooms} + ' pièces'">pièces</span></span>
+                    <span><i class="bi bi-arrows-angle-expand"></i> <span th:text="${#numbers.formatDecimal(p.surface, 1, 0)} + ' m²'">surface</span></span>
+                    <span><i class="bi bi-tag"></i> <span th:text="${p.propertyType}">type</span></span>
                 </div>
             </div>
+            <div class="price-block">
+                <div class="price" th:text="${#numbers.formatInteger(p.price, 1, 'WHITESPACE')} + ' €'">Prix</div>
+                <span class="btn secondary">Voir la fiche</span>
+            </div>
+        </a>
+
+        <div class="empty-state" th:if="${properties.isEmpty()}">
+            <i class="bi bi-emoji-frown" style="font-size:1.8rem;"></i>
+            <p>Aucun bien ne correspond à ces critères pour le moment.</p>
         </div>
-        <p th:if="${properties.isEmpty()}">Aucun bien ne correspond à ces critères pour le moment.</p>
     </div>
-</main>
+</div>
 
 <div th:replace="~{fragments/layout :: voice-widget}"></div>
 <footer th:replace="~{fragments/layout :: footer}"></footer>

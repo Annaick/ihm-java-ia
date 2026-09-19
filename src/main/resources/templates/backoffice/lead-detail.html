@@ -4,11 +4,11 @@
 <body>
 <div class="backoffice-shell">
     <nav class="backoffice-nav">
-        <div class="logo">Horizon Immo</div>
-        <a class="active" th:href="@{/backoffice}">Leads</a>
-        <a th:href="@{/}">Retour au site</a>
+        <div class="logo"><i class="bi bi-house-door-fill"></i> Horizon Immo</div>
+        <a class="active" th:href="@{/backoffice}"><i class="bi bi-people-fill"></i> Leads</a>
+        <a th:href="@{/}"><i class="bi bi-box-arrow-up-right"></i> Retour au site</a>
         <form method="post" th:action="@{/backoffice/logout}">
-            <button type="submit" style="background:none;border:none;color:inherit;padding:12px 24px;cursor:pointer;text-align:left;width:100%;">Se déconnecter</button>
+            <button type="submit"><i class="bi bi-box-arrow-right"></i> Se déconnecter</button>
         </form>
     </nav>
     <div class="backoffice-content">
@@ -46,11 +46,11 @@
             <div class="actions">
                 <form method="post" th:action="@{/backoffice/leads/{id}/statut(id=${lead.id})}">
                     <input type="hidden" name="status" value="CONFIRME"/>
-                    <button class="btn" type="submit">Confirmer le rendez-vous</button>
+                    <button class="btn" type="submit"><i class="bi bi-check2-circle"></i> Confirmer le rendez-vous</button>
                 </form>
                 <form method="post" th:action="@{/backoffice/leads/{id}/statut(id=${lead.id})}">
                     <input type="hidden" name="status" value="TRAITE"/>
-                    <button class="btn secondary" type="submit">Marquer comme traité</button>
+                    <button class="btn secondary" type="submit"><i class="bi bi-archive"></i> Marquer comme traité</button>
                 </form>
             </div>
         </div>

@@ -77,7 +77,7 @@
     const card = document.createElement("div");
     card.className = "voice-rdv-card";
     card.innerHTML =
-      '<div class="label">Rendez-vous enregistré</div>' +
+      '<div class="label"><i class="bi bi-calendar2-check-fill"></i> Rendez-vous enregistré</div>' +
       '<div><strong>' + escapeHtml(details.requestedSlot || "Créneau à confirmer") + "</strong></div>" +
       '<div>' + escapeHtml(details.summary || "") + "</div>";
     messagesEl.appendChild(card);

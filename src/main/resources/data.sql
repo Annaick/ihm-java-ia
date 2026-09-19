@@ -1,19 +1,15 @@
 INSERT INTO property (title, transaction_type, property_type, price, city, zone, rooms, surface, description, photo_url)
-SELECT 'Appartement lumineux avec balcon', 'VENTE', 'APPARTEMENT', 245000, 'Lyon', 'Croix-Rousse', 3, 65, 'Bel appartement traversant au 3eme etage, balcon expose sud, proche des commerces.', 'https://picsum.photos/seed/horizon1/480/320'
+SELECT 'Villa normande avec vue mer', 'VENTE', 'MAISON', 890000, 'Deauville', 'Front de mer', 6, 180, 'Villa a colombages typique du bord de mer normand, terrasse et vue degagee.', '/img/properties/villa-normande.jpg'
 WHERE NOT EXISTS (SELECT 1 FROM property);
 
 INSERT INTO property (title, transaction_type, property_type, price, city, zone, rooms, surface, description, photo_url)
-SELECT 'Maison avec jardin', 'VENTE', 'MAISON', 380000, 'Lyon', 'Monplaisir', 5, 110, 'Maison familiale avec jardin clos, garage, a deux pas du tramway.', 'https://picsum.photos/seed/horizon2/480/320'
-WHERE (SELECT COUNT(*) FROM property) < 5;
+SELECT 'Maison de caractere en briques', 'VENTE', 'MAISON', 520000, 'Lyon', 'Croix-Rousse', 5, 140, 'Maison ancienne en briques pleine de cachet, proche des commerces et du tramway.', '/img/properties/maison-caractere.jpg'
+WHERE (SELECT COUNT(*) FROM property) < 4;
 
 INSERT INTO property (title, transaction_type, property_type, price, city, zone, rooms, surface, description, photo_url)
-SELECT 'Studio etudiant renove', 'LOCATION', 'STUDIO', 650, 'Lyon', 'Part-Dieu', 1, 22, 'Studio entierement renove, proche des transports et de la gare.', 'https://picsum.photos/seed/horizon3/480/320'
-WHERE (SELECT COUNT(*) FROM property) < 5;
+SELECT 'Villa provencale fleurie', 'VENTE', 'MAISON', 610000, 'Aix-en-Provence', 'Centre historique', 4, 95, 'Villa lumineuse avec jardin et bougainvilliers, a deux pas du centre historique.', '/img/properties/villa-fleurie.jpg'
+WHERE (SELECT COUNT(*) FROM property) < 4;
 
 INSERT INTO property (title, transaction_type, property_type, price, city, zone, rooms, surface, description, photo_url)
-SELECT 'Appartement 2 pieces avec vue', 'LOCATION', 'APPARTEMENT', 890, 'Lyon', 'Confluence', 2, 45, 'Appartement moderne dans une residence recente, vue degagee.', 'https://picsum.photos/seed/horizon4/480/320'
-WHERE (SELECT COUNT(*) FROM property) < 5;
-
-INSERT INTO property (title, transaction_type, property_type, price, city, zone, rooms, surface, description, photo_url)
-SELECT 'Duplex avec terrasse', 'VENTE', 'APPARTEMENT', 420000, 'Lyon', 'Croix-Rousse', 4, 95, 'Duplex avec grande terrasse plein sud et vue sur les toits.', 'https://picsum.photos/seed/horizon5/480/320'
-WHERE (SELECT COUNT(*) FROM property) < 5;
+SELECT 'Appartement vue panoramique', 'LOCATION', 'APPARTEMENT', 2200, 'Paris', 'Montparnasse', 3, 72, 'Appartement en hauteur avec vue degagee sur la ville, immeuble recent et securise.', '/img/properties/tour-panoramique.jpg'
+WHERE (SELECT COUNT(*) FROM property) < 4;

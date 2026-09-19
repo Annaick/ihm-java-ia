@@ -33,11 +33,11 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                // L'API est appelee par l'agent vocal x.ai (server-to-server), protegee
-                // a part par XaiApiKeyFilter plutot que par une session de connexion.
+                // L'API est appelee par l'agent vocal x.ai / le navigateur en direct,
+                // pas de session : on la laisse ouverte et hors CSRF.
                 .csrf(csrf -> csrf.ignoringRequestMatchers("/api/**"))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/annonces", "/css/**", "/js/**", "/img/**", "/api/**").permitAll()
+                        .requestMatchers("/", "/annonces", "/annonces/**", "/css/**", "/js/**", "/img/**", "/api/**").permitAll()
                         .requestMatchers("/backoffice/login").permitAll()
                         .requestMatchers("/backoffice/**").authenticated()
                         .anyRequest().permitAll())

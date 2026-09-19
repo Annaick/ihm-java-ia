@@ -4,6 +4,9 @@
 *.pem
 deploy/*.env
 
+# Claude Code local cache
+.claude/
+
 # Java (Maven)
 target/
 *.class

@@ -5,50 +5,85 @@
 <header th:replace="~{fragments/layout :: appbar}"></header>
 
 <section class="hero">
-    <div>
+    <div class="hero-inner">
         <span class="badge"><span class="dot"></span> Conseiller vocal IA actif 24h/24 · 7j/7</span>
         <h1>Un conseiller à votre écoute, même à 23h un dimanche.</h1>
         <p>Horizon Immo réinvente la recherche immobilière. Notre intelligence artificielle
             qualifie vos envies de vive voix et planifie instantanément vos visites avec
             nos agents humains locaux.</p>
-        <button type="button" class="btn" onclick="document.getElementById('voice-fab').click()">
-            Parler à notre conseiller
-        </button>
+        <div class="hero-actions">
+            <button type="button" class="btn" onclick="document.getElementById('voice-fab').click()">
+                <i class="bi bi-mic-fill"></i> Parler à notre conseiller
+            </button>
+            <a class="link-secondary" href="#biens-a-la-une">Ou faire sa recherche soi-même ↓</a>
+        </div>
     </div>
-    <img src="https://picsum.photos/seed/horizonhero/800/560" alt="Maison mise en avant"/>
 </section>
+
+<form class="search-card" method="get" th:action="@{/annonces}">
+    <div class="field">
+        <label><i class="bi bi-tag-fill"></i> Transaction</label>
+        <select name="transactionType">
+            <option value="">Achat ou location</option>
+            <option value="VENTE">Achat</option>
+            <option value="LOCATION">Location</option>
+        </select>
+    </div>
+    <div class="field">
+        <label><i class="bi bi-geo-alt-fill"></i> Quartier</label>
+        <input type="text" name="zone" placeholder="Ex. Croix-Rousse"/>
+    </div>
+    <div class="field">
+        <label><i class="bi bi-house-door-fill"></i> Type de bien</label>
+        <input type="text" name="propertyType" placeholder="Maison, appartement..."/>
+    </div>
+    <div class="field">
+        <label><i class="bi bi-cash-coin"></i> Budget max</label>
+        <input type="number" name="maxPrice" placeholder="Sans limite"/>
+    </div>
+    <button class="btn" type="submit"><i class="bi bi-search"></i> Rechercher</button>
+</form>
 
 <div class="reassurance">
     <div class="card">
-        <div class="icon">🕐</div>
+        <div class="icon"><i class="bi bi-clock-history"></i></div>
         <h4>Disponible 24h/24</h4>
         <p>Une question tardive ? Une estimation urgente ? Notre IA vous répond de vive voix à toute heure.</p>
     </div>
     <div class="card">
-        <div class="icon">⚡</div>
+        <div class="icon"><i class="bi bi-lightning-charge-fill"></i></div>
         <h4>Réponse immédiate</h4>
         <p>Fini l'attente par mail. Vos critères sont qualifiés instantanément, de façon naturelle.</p>
     </div>
     <div class="card">
-        <div class="icon">✅</div>
+        <div class="icon"><i class="bi bi-calendar2-check-fill"></i></div>
         <h4>Rendez-vous garanti</h4>
         <p>Dès que vos critères sont analysés, un rendez-vous est bloqué avec un agent de l'agence.</p>
     </div>
 </div>
 
-<main>
-    <h2 class="section-title">Biens à la une</h2>
+<main id="biens-a-la-une">
+    <div class="section-header">
+        <h2 class="section-title">Biens à la une</h2>
+        <a th:href="@{/annonces}">Voir toutes les annonces <i class="bi bi-arrow-right"></i></a>
+    </div>
     <div class="property-grid">
-        <div class="property-card" th:each="p : ${properties}">
-            <img th:src="${p.photoUrl}" alt=""/>
+        <a class="property-card" th:each="p : ${properties}" th:href="@{/annonces/{id}(id=${p.id})}">
+            <div class="media">
+                <img th:src="${p.photoUrl}" alt=""/>
+                <span class="tag" th:text="${p.transactionType.name() == 'VENTE'} ? 'À vendre' : 'À louer'">Tag</span>
+            </div>
             <div class="content">
                 <h3 th:text="${p.title}">Titre du bien</h3>
-                <div class="price" th:text="${p.price} + ' €'">Prix</div>
-                <div class="meta" th:text="${p.city} + ' · ' + ${p.zone} + ' · ' + ${p.rooms} + ' pièces · ' + ${p.surface} + ' m²'">
-                    Meta
+                <div class="price" th:text="${#numbers.formatInteger(p.price, 1, 'WHITESPACE')} + ' €'">Prix</div>
+                <div class="meta">
+                    <i class="bi bi-geo-alt-fill"></i>
+                    <span th:text="${p.city} + ' · ' + ${p.zone}">Ville</span>
+                    <span>· <i class="bi bi-door-open"></i> <span th:text="${p.rooms} + ' pièces'">pièces</span></span>
+                    <span>· <i class="bi bi-arrows-angle-expand"></i> <span th:text="${#numbers.formatDecimal(p.surface, 1, 0)} + ' m²'">surface</span></span>
                 </div>
             </div>
-        </div>
+        </a>
     </div>
 </main>
 

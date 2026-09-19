@@ -31,4 +31,20 @@ public class PropertyService {
     public Property findById(Long id) {
         return propertyRepository.findById(id).orElseThrow();
     }
+
+    public List<Property> findSimilar(Property property) {
+        return propertyRepository.findAll().stream()
+                .filter(p -> !p.getId().equals(property.getId()))
+                .filter(p -> p.getTransactionType() == property.getTransactionType())
+                .limit(3)
+                .toList();
+    }
+
+    public List<String> distinctPropertyTypes() {
+        return propertyRepository.findAll().stream()
+                .map(Property::getPropertyType)
+                .distinct()
+                .sorted()
+                .toList();
+    }
 }

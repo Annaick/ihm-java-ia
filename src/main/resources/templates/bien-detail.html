@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: pagehead(${property.title})}"></head>
+<body>
+<header th:replace="~{fragments/layout :: appbar}"></header>
+
+<div class="detail-hero" th:style="'background-image: url(' + ${property.photoUrl} + ')'">
+    <div class="overlay">
+        <div class="inner">
+            <span class="tag" th:text="${property.transactionType.name() == 'VENTE'} ? 'À vendre' : 'À louer'">Tag</span>
+            <h1 th:text="${property.title}">Titre du bien</h1>
+            <div class="location">
+                <i class="bi bi-geo-alt-fill"></i>
+                <span th:text="${property.city} + ' · ' + ${property.zone}">Ville</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="detail-body">
+    <div>
+        <div class="detail-facts">
+            <div class="fact">
+                <i class="bi bi-door-open"></i>
+                <strong th:text="${property.rooms}">0</strong>
+                <span>Pièces</span>
+            </div>
+            <div class="fact">
+                <i class="bi bi-arrows-angle-expand"></i>
+                <strong th:text="${#numbers.formatDecimal(property.surface, 1, 0)} + ' m²'">0 m²</strong>
+                <span>Surface</span>
+            </div>
+            <div class="fact">
+                <i class="bi bi-tag"></i>
+                <strong th:text="${property.propertyType}">Type</strong>
+                <span>Type de bien</span>
+            </div>
+        </div>
+
+        <div class="detail-description">
+            <h2>Description</h2>
+            <p th:text="${property.description}">Description du bien.</p>
+        </div>
+    </div>
+
+    <aside class="detail-sidebar">
+        <div class="price" th:text="${#numbers.formatInteger(property.price, 1, 'WHITESPACE')} + ' €'">Prix</div>
+        <p th:if="${property.transactionType.name() == 'LOCATION'}">par mois, charges non comprises</p>
+        <p th:unless="${property.transactionType.name() == 'LOCATION'}">Prix de vente</p>
+        <button type="button" class="btn" onclick="document.getElementById('voice-fab').click()">
+            <i class="bi bi-mic-fill"></i> Parler à un conseiller
+        </button>
+    </aside>
+</div>
+
+<div class="detail-similar" th:if="${!similar.isEmpty()}">
+    <div class="section-header">
+        <h2 class="section-title">Biens similaires</h2>
+    </div>
+    <div class="property-grid">
+        <a class="property-card" th:each="p : ${similar}" th:href="@{/annonces/{id}(id=${p.id})}">
+            <div class="media">
+                <img th:src="${p.photoUrl}" alt=""/>
+                <span class="tag" th:text="${p.transactionType.name() == 'VENTE'} ? 'À vendre' : 'À louer'">Tag</span>
+            </div>
+            <div class="content">
+                <h3 th:text="${p.title}">Titre du bien</h3>
+                <div class="price" th:text="${#numbers.formatInteger(p.price, 1, 'WHITESPACE')} + ' €'">Prix</div>
+                <div class="meta">
+                    <i class="bi bi-geo-alt-fill"></i>
+                    <span th:text="${p.city} + ' · ' + ${p.zone}">Ville</span>
+                </div>
+            </div>
+        </a>
+    </div>
+</div>
+
+<div th:replace="~{fragments/layout :: voice-widget}"></div>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<script th:src="@{/js/voice-agent.js}"></script>
+</body>
+</html>
