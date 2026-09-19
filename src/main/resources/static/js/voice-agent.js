@@ -16,9 +16,11 @@
  */
 (function () {
   const REALTIME_SAMPLE_RATE = 24000;
-  const SILENCE_RMS_THRESHOLD = 0.012;
+  const SILENCE_RMS_THRESHOLD = 0.02;
+  const NOISE_FLOOR_MULTIPLIER = 3.5;
+  const SPEECH_ONSET_FRAMES = 3;
   const SILENCE_DURATION_MS = 900;
-  const MIN_SPEECH_DURATION_MS = 250;
+  const MIN_SPEECH_DURATION_MS = 500;
 
   const fab = document.getElementById("voice-fab");
   const panel = document.getElementById("voice-panel");
@@ -51,6 +53,8 @@
   let isSpeaking = false;
   let speechStartedAt = 0;
   let silenceStartedAt = null;
+  let noiseFloor = 0.004;
+  let consecutiveLoudFrames = 0;
 
   let callStartedAt = null;
   let timerInterval = null;
@@ -197,9 +201,17 @@
   }
 
   /**
-   * VAD (voice activity detection) simple base sur l'energie du signal.
-   * Bascule parole -> silence prolonge => on demande explicitement une
-   * reponse, plutot que de dependre d'une detection cote serveur.
+   * VAD (voice activity detection) basee sur l'energie du signal, avec
+   * seuil adaptatif au bruit ambiant : un bruit de fond (souffle, ventilo,
+   * bruit de piece) plus fort que le seuil fixe declenchait a tort un
+   * "silence apres parole" -> commitAndRespond() sur du bruit seul, d'ou
+   * des relances de l'agent sans rien avoir ete dit ("[noise]" cote x.ai).
+   *
+   * Deux gardes ajoutees :
+   * 1. Seuil dynamique = bruit ambiant mesure x un facteur, pas juste un
+   *    seuil absolu (s'adapte a l'environnement de l'utilisateur).
+   * 2. Il faut plusieurs frames consecutives au-dessus du seuil pour
+   *    confirmer un vrai debut de parole (filtre les pics de bruit brefs).
    */
   function detectSpeech(samples) {
     let sumSquares = 0;
@@ -209,21 +221,32 @@
     const rms = Math.sqrt(sumSquares / samples.length);
     const now = performance.now();
 
-    if (rms > SILENCE_RMS_THRESHOLD) {
-      if (!isSpeaking) {
+    if (!isSpeaking) {
+      // Le niveau de bruit ambiant est mesure en continu hors parole,
+      // avec une moyenne mobile lente pour suivre les variations douces.
+      noiseFloor = noiseFloor * 0.98 + rms * 0.02;
+    }
+    const dynamicThreshold = Math.max(SILENCE_RMS_THRESHOLD, noiseFloor * NOISE_FLOOR_MULTIPLIER);
+
+    if (rms > dynamicThreshold) {
+      consecutiveLoudFrames++;
+      if (!isSpeaking && consecutiveLoudFrames >= SPEECH_ONSET_FRAMES) {
         isSpeaking = true;
         speechStartedAt = now;
         setStatus("Je vous écoute…");
       }
       silenceStartedAt = null;
-    } else if (isSpeaking) {
-      if (silenceStartedAt === null) {
-        silenceStartedAt = now;
-      } else if (now - silenceStartedAt > SILENCE_DURATION_MS) {
-        isSpeaking = false;
-        silenceStartedAt = null;
-        if (now - speechStartedAt > MIN_SPEECH_DURATION_MS) {
-          commitAndRespond();
+    } else {
+      consecutiveLoudFrames = 0;
+      if (isSpeaking) {
+        if (silenceStartedAt === null) {
+          silenceStartedAt = now;
+        } else if (now - silenceStartedAt > SILENCE_DURATION_MS) {
+          isSpeaking = false;
+          silenceStartedAt = null;
+          if (now - speechStartedAt > MIN_SPEECH_DURATION_MS) {
+            commitAndRespond();
+          }
         }
       }
     }
