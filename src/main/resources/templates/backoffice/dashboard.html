@@ -22,7 +22,7 @@
                 <td>
                     <a th:href="@{/backoffice/leads/{id}(id=${lead.id})}" th:text="${lead.prospectName}">Nom</a>
                 </td>
-                <td th:text="${lead.transactionType} + ' · ' + ${lead.propertyType} + ' · ' + ${lead.zone} + ' · ' + ${lead.budget} + ' €'">
+                <td th:text="${lead.transactionType} + ' · ' + ${lead.propertyType} + ' · ' + ${lead.zone} + ' · ' + ${lead.budget} + ' Ar'">
                     Besoin
                 </td>
                 <td th:text="${lead.requestedSlot}">Créneau</td>

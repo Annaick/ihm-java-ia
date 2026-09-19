@@ -8,9 +8,9 @@
     <div class="hero-inner">
         <span class="badge"><span class="dot"></span> Conseiller vocal IA actif 24h/24 · 7j/7</span>
         <h1>Un conseiller à votre écoute, même à 23h un dimanche.</h1>
-        <p>Horizon Immo réinvente la recherche immobilière. Notre intelligence artificielle
-            qualifie vos envies de vive voix et planifie instantanément vos visites avec
-            nos agents humains locaux.</p>
+        <p>Horizon Immo réinvente la recherche immobilière à Madagascar. Notre intelligence
+            artificielle qualifie vos envies de vive voix et planifie instantanément vos
+            visites avec nos agents humains locaux, d'Antananarivo à Toamasina.</p>
         <div class="hero-actions">
             <button type="button" class="btn" onclick="document.getElementById('voice-fab').click()">
                 <i class="bi bi-mic-fill"></i> Parler à notre conseiller
@@ -31,7 +31,7 @@
     </div>
     <div class="field">
         <label><i class="bi bi-geo-alt-fill"></i> Quartier</label>
-        <input type="text" name="zone" placeholder="Ex. Croix-Rousse"/>
+        <input type="text" name="zone" placeholder="Ex. Analakely"/>
     </div>
     <div class="field">
         <label><i class="bi bi-house-door-fill"></i> Type de bien</label>
@@ -75,7 +75,7 @@
             </div>
             <div class="content">
                 <h3 th:text="${p.title}">Titre du bien</h3>
-                <div class="price" th:text="${#numbers.formatInteger(p.price, 1, 'WHITESPACE')} + ' €'">Prix</div>
+                <div class="price" th:text="${#numbers.formatInteger(p.price, 1, 'WHITESPACE')} + ' Ar'">Prix</div>
                 <div class="meta">
                     <i class="bi bi-geo-alt-fill"></i>
                     <span th:text="${p.city} + ' · ' + ${p.zone}">Ville</span>

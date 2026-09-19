@@ -25,7 +25,7 @@
                 <td th:text="${p.title}">Titre</td>
                 <td th:text="${p.city} + ' · ' + ${p.zone}">Ville</td>
                 <td th:text="${p.transactionType}">Transaction</td>
-                <td th:text="${#numbers.formatInteger(p.price, 1, 'WHITESPACE')} + ' €'">Prix</td>
+                <td th:text="${#numbers.formatInteger(p.price, 1, 'WHITESPACE')} + ' Ar'">Prix</td>
                 <td>
                     <a th:href="@{/backoffice/biens/{id}/modifier(id=${p.id})}"><i class="bi bi-pencil-square"></i> Modifier</a>
                     &nbsp;·&nbsp;

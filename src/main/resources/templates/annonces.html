@@ -24,7 +24,7 @@
                 </div>
                 <div class="field">
                     <label>Quartier</label>
-                    <input type="text" name="zone" placeholder="Ex. Croix-Rousse" th:value="${zone}"/>
+                    <input type="text" name="zone" placeholder="Ex. Analakely" th:value="${zone}"/>
                 </div>
                 <div class="field">
                     <label>Budget maximum</label>
@@ -75,7 +75,7 @@
                 </div>
             </div>
             <div class="price-block">
-                <div class="price" th:text="${#numbers.formatInteger(p.price, 1, 'WHITESPACE')} + ' €'">Prix</div>
+                <div class="price" th:text="${#numbers.formatInteger(p.price, 1, 'WHITESPACE')} + ' Ar'">Prix</div>
                 <span class="btn secondary">Voir la fiche</span>
             </div>
         </a>

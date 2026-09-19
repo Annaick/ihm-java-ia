@@ -44,7 +44,7 @@
     </div>
 
     <aside class="detail-sidebar">
-        <div class="price" th:text="${#numbers.formatInteger(property.price, 1, 'WHITESPACE')} + ' €'">Prix</div>
+        <div class="price" th:text="${#numbers.formatInteger(property.price, 1, 'WHITESPACE')} + ' Ar'">Prix</div>
         <p th:if="${property.transactionType.name() == 'LOCATION'}">par mois, charges non comprises</p>
         <p th:unless="${property.transactionType.name() == 'LOCATION'}">Prix de vente</p>
         <button type="button" class="btn" onclick="document.getElementById('voice-fab').click()">
@@ -65,7 +65,7 @@
             </div>
             <div class="content">
                 <h3 th:text="${p.title}">Titre du bien</h3>
-                <div class="price" th:text="${#numbers.formatInteger(p.price, 1, 'WHITESPACE')} + ' €'">Prix</div>
+                <div class="price" th:text="${#numbers.formatInteger(p.price, 1, 'WHITESPACE')} + ' Ar'">Prix</div>
                 <div class="meta">
                     <i class="bi bi-geo-alt-fill"></i>
                     <span th:text="${p.city} + ' · ' + ${p.zone}">Ville</span>

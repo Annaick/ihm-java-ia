@@ -158,6 +158,28 @@ h1, h2, h3, h4 {
   box-shadow: none;
 }
 
+/* Mobile : le bouton "Parler a un specialiste" deborde du header flottant
+   sur petit ecran ; le FAB flottant suffit pour ouvrir l'agent vocal. */
+@media (max-width: 640px) {
+  .app-bar {
+    padding: 12px 16px;
+  }
+
+  .app-bar .logo span,
+  .app-bar .logo {
+    font-size: 1.05rem;
+  }
+
+  .app-bar nav .btn {
+    display: none;
+  }
+
+  .app-bar nav a:not(.btn) {
+    margin-left: 14px;
+    font-size: 0.85rem;
+  }
+}
+
 /* ============================================================
    HERO — full-bleed photo + overlapping search card
    ============================================================ */
@@ -169,7 +191,7 @@ h1, h2, h3, h4 {
   padding: 140px 40px 120px;
   background:
     linear-gradient(180deg, rgba(38, 25, 14, 0.4) 0%, rgba(28, 18, 10, 0.75) 100%),
-    url("/img/hero-villa.jpg") center/cover no-repeat;
+    url("/img/hero-antananarivo.jpg") center/cover no-repeat;
   animation: fade-up 0.6s ease both;
 }
 
