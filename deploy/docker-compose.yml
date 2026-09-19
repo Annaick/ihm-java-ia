@@ -1,0 +1,33 @@
+# Horizon Immo (branch main) -> https://immobilier.anaick.com
+# Built and (re)started by the Jenkins pipeline defined in deploy/Jenkinsfile.
+#
+#   docker compose -p horizon-immo -f deploy/docker-compose.yml up -d --build
+#
+services:
+  horizon-immo:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    image: horizon-immo:latest
+    container_name: horizon-immo
+    restart: unless-stopped
+    # Bound to loopback only; Caddy (host) terminates TLS and reverse-proxies.
+    ports:
+      - "127.0.0.1:8081:8080"
+    # XAI_API_KEY set via deploy/horizon-immo.env (see deploy/README.md).
+    env_file:
+      - path: horizon-immo.env
+        required: false
+    volumes:
+      # Named volume so the SQLite database survives redeploys (the git
+      # checkout itself is reset on every build).
+      - horizon-immo-data:/app/data
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:8080/"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+volumes:
+  horizon-immo-data:

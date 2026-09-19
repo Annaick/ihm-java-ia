@@ -1,0 +1,77 @@
+// Deploy pipeline for horizon-immo.
+//
+// Trigger (webhook / manual):
+//   curl -fsSL "https://jenkins.anaick.com/buildByToken/build?job=horizon-immo&token=<DEPLOY_TOKEN>"
+//
+// The job checks out branch `main`, rebuilds the Docker image (Maven build
+// inside the image) and restarts the container that Caddy serves at
+// https://immobilier.anaick.com.
+pipeline {
+  agent any
+
+  options {
+    timestamps()
+    disableConcurrentBuilds()
+    timeout(time: 20, unit: 'MINUTES')
+    buildDiscarder(logRotator(numToKeepStr: '20'))
+  }
+
+  environment {
+    COMPOSE_PROJECT = 'horizon-immo'
+    COMPOSE_FILE    = 'deploy/docker-compose.yml'
+    APP_URL         = 'http://127.0.0.1:8081'
+  }
+
+  stages {
+    stage('Checkout main') {
+      steps {
+        checkout scm
+        sh 'echo "Deploying commit:"; git log -1 --oneline'
+      }
+    }
+
+    stage('Build image') {
+      steps {
+        sh 'docker compose -p "$COMPOSE_PROJECT" -f "$COMPOSE_FILE" build'
+      }
+    }
+
+    stage('Deploy') {
+      steps {
+        sh 'docker compose -p "$COMPOSE_PROJECT" -f "$COMPOSE_FILE" up -d --remove-orphans'
+      }
+    }
+
+    stage('Smoke test') {
+      steps {
+        sh '''
+          set -e
+          for i in $(seq 1 30); do
+            code=$(curl -s -o /dev/null -w "%{http_code}" "$APP_URL" || true)
+            echo "health check $i -> $code"
+            if [ "$code" = "200" ]; then
+              echo "App is up."
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "App did not return 200 in time. Recent container logs:"
+          docker logs --tail 80 horizon-immo || true
+          exit 1
+        '''
+      }
+    }
+  }
+
+  post {
+    success {
+      echo '✅ deployed -> https://immobilier.anaick.com'
+    }
+    failure {
+      echo '❌ Deploy failed. Previous container (if any) is left running.'
+    }
+    always {
+      sh 'docker image prune -f >/dev/null 2>&1 || true'
+    }
+  }
+}
