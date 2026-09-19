@@ -7,11 +7,14 @@ import java.time.LocalDateTime;
  * Payload envoye par l'agent vocal x.ai une fois le besoin qualifie et le
  * rendez-vous propose au prospect.
  *
- * transactionType reste une String ici (pas l'enum TransactionType
- * directement) : l'agent vocal peut envoyer une casse ou un mot different
- * ("location", "louer"...), et on ne veut pas qu'une 400 de desserialisation
- * fasse echouer toute la creation du lead pour ce detail. Voir
- * TransactionType.parseLoose(), applique dans LeadApiController.
+ * transactionType, budget et roomsWanted restent des String ici (pas les
+ * types stricts TransactionType/Integer) : l'agent vocal peut envoyer une
+ * casse ou un mot different pour transactionType ("location", "louer"...),
+ * ou un nombre au format decimal pour budget/roomsWanted ("70000.0" au lieu
+ * de "70000"), et on ne veut pas qu'une 400 de desserialisation fasse
+ * echouer toute la creation du lead pour ce detail. Voir
+ * TransactionType.parseLoose() et NumberUtils.parseLooseInt(), appliques
+ * dans LeadApiController.
  */
 public class LeadCreateRequest {
 
@@ -23,10 +26,10 @@ public class LeadCreateRequest {
 
     private String prospectEmail;
     private String transactionType;
-    private Integer budget;
+    private String budget;
     private String zone;
     private String propertyType;
-    private Integer roomsWanted;
+    private String roomsWanted;
     private String timeline;
     private LocalDateTime requestedSlot;
     private String conversationSummary;
@@ -63,11 +66,11 @@ public class LeadCreateRequest {
         this.transactionType = transactionType;
     }
 
-    public Integer getBudget() {
+    public String getBudget() {
         return budget;
     }
 
-    public void setBudget(Integer budget) {
+    public void setBudget(String budget) {
         this.budget = budget;
     }
 
@@ -87,11 +90,11 @@ public class LeadCreateRequest {
         this.propertyType = propertyType;
     }
 
-    public Integer getRoomsWanted() {
+    public String getRoomsWanted() {
         return roomsWanted;
     }
 
-    public void setRoomsWanted(Integer roomsWanted) {
+    public void setRoomsWanted(String roomsWanted) {
         this.roomsWanted = roomsWanted;
     }
 

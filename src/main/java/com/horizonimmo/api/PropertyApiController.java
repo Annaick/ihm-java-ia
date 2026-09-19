@@ -3,6 +3,7 @@ package com.horizonimmo.api;
 import com.horizonimmo.model.Property;
 import com.horizonimmo.model.TransactionType;
 import com.horizonimmo.service.PropertyService;
+import com.horizonimmo.util.NumberUtils;
 import java.util.List;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -26,7 +27,8 @@ public class PropertyApiController {
             @RequestParam(required = false) String transactionType,
             @RequestParam(required = false) String zone,
             @RequestParam(required = false) String propertyType,
-            @RequestParam(required = false) Integer maxPrice) {
-        return propertyService.search(TransactionType.parseLoose(transactionType), zone, propertyType, maxPrice);
+            @RequestParam(required = false) String maxPrice) {
+        return propertyService.search(
+                TransactionType.parseLoose(transactionType), zone, propertyType, NumberUtils.parseLooseInt(maxPrice));
     }
 }
