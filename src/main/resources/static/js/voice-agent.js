@@ -38,7 +38,15 @@
   let micSourceNode = null;
   let micProcessorNode = null;
   let playbackTime = 0;
-  let inCall = false;
+
+  // Vrai des l'instant du clic jusqu'a la fin complete de l'appel — pas
+  // seulement une fois le socket ouvert. L'ouverture (fetch config + accord
+  // du micro par le navigateur) est asynchrone ; sans ce verrou synchrone,
+  // un second clic pendant ce delai (ex. Safari qui rejoue parfois le clic
+  // juste apres la popup d'autorisation du micro) ouvrait une deuxieme
+  // connexion, donc une deuxieme session cote agent avec son propre message
+  // de bienvenue — d'ou le "bonjour" entendu deux fois.
+  let callActive = false;
 
   let isSpeaking = false;
   let speechStartedAt = 0;
@@ -49,12 +57,15 @@
 
   fab.addEventListener("click", () => {
     panel.classList.add("open");
-    if (!inCall) {
-      startConversation().catch((err) => {
-        console.error("Erreur agent vocal :", err);
-        setStatus("Erreur : " + err.message);
-      });
+    if (callActive) {
+      return;
     }
+    callActive = true;
+    startConversation().catch((err) => {
+      console.error("Erreur agent vocal :", err);
+      setStatus("Erreur : " + err.message);
+      callActive = false;
+    });
   });
 
   closeBtn.addEventListener("click", () => {
@@ -96,6 +107,7 @@
     const config = await configResp.json();
     if (!config.configured) {
       setStatus("Agent vocal pas encore configuré.");
+      callActive = false;
       return;
     }
 
@@ -106,7 +118,6 @@
     socket = new WebSocket(wsProtocol + "//" + window.location.host + "/ws/voice");
 
     socket.addEventListener("open", () => {
-      inCall = true;
       setStatus("En communication");
       startTimer();
       startMicCapture();
@@ -225,11 +236,11 @@
   }
 
   function endCall() {
-    if (!inCall && !socket) {
+    if (!callActive && !socket) {
       panel.classList.remove("open");
       return;
     }
-    inCall = false;
+    callActive = false;
     stopTimer();
     setStatus("Appel terminé");
 
