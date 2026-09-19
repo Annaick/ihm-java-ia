@@ -25,31 +25,25 @@
 
 <div th:fragment="voice-widget">
     <button id="voice-fab" class="voice-fab" type="button" title="Parler à notre conseiller">
-        <i class="bi bi-mic-fill"></i>
+        <i class="bi bi-headset"></i>
     </button>
 
-    <div id="voice-panel" class="voice-panel">
-        <div class="voice-header">
-            <div class="avatar"><i class="bi bi-house-heart-fill"></i></div>
-            <div class="titles">
-                <strong>Assistant Vocal Horizon</strong>
-                <span id="voice-status-line">Hors ligne</span>
-            </div>
-            <button type="button" class="close" id="voice-close"><i class="bi bi-x-lg"></i></button>
+    <div id="voice-panel" class="voice-panel call-panel">
+        <button type="button" class="call-dismiss" id="voice-close" title="Réduire">
+            <i class="bi bi-chevron-down"></i>
+        </button>
+
+        <div class="call-avatar-ring" id="voice-avatar-ring">
+            <div class="call-avatar"><i class="bi bi-headset"></i></div>
         </div>
-        <div class="voice-messages" id="voice-messages">
-            <div class="voice-message assistant">
-                Bonjour ! Cliquez sur le micro pour me parler de votre projet immobilier —
-                je peux qualifier votre besoin et vous obtenir un rendez-vous avec un agent,
-                même en dehors des horaires d'ouverture.
-            </div>
-        </div>
-        <div class="voice-footer">
-            <div class="voice-status" id="voice-status">Prêt à vous écouter</div>
-            <button type="button" id="voice-mic" class="mic-button">
-                <i class="bi bi-mic-fill"></i> Parler à notre conseiller
-            </button>
-        </div>
+
+        <div class="call-name">Assistant Horizon Immo</div>
+        <div class="call-status" id="voice-status-line">Appel...</div>
+        <div class="call-timer" id="voice-timer">00:00</div>
+
+        <button type="button" id="voice-mic" class="call-hangup" title="Raccrocher">
+            <i class="bi bi-telephone-x-fill"></i>
+        </button>
     </div>
 </div>
 

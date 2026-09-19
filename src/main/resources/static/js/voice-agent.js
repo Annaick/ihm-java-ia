@@ -1,28 +1,32 @@
 /**
- * Widget de l'agent vocal x.ai (Voice Agent Builder).
+ * Widget "appel" de l'agent vocal x.ai (Voice Agent Builder).
  *
- * L'agent (instructions, voix, outils "API Request" vers /api/properties et
- * /api/leads) est configure directement dans le tableau de bord x.ai
- * (console.x.ai/voice/agents) — ce script ne fait que capturer/jouer
- * l'audio et relayer les octets vers notre backend, qui relaie a son tour
- * vers x.ai (voir VoiceProxyHandler.java). Aucune cle API ni logique de
- * function-calling cote navigateur.
+ * L'agent (instructions, voix, outils "API Request" vers /api/properties,
+ * /api/disponibilites et /api/leads) est configure dans le tableau de bord
+ * x.ai (console.x.ai/voice/agents) — ce script capture/joue l'audio et
+ * relaie les octets vers notre backend (VoiceProxyHandler), qui relaie a
+ * son tour vers x.ai. Aucune cle API ni logique de function-calling cote
+ * navigateur.
  *
- * NOTE : les noms exacts des evenements de transcript texte ne sont pas
- * entierement documentes publiquement au moment de l'ecriture de ce
- * fichier. Le handler ci-dessous reconnait les motifs les plus probables
- * (voir handleServerEvent) ; a verifier/ajuster apres un premier test reel.
+ * Detection de fin de parole geree cote client (energie du signal) plutot
+ * que de dependre de la detection automatique du serveur : apres une
+ * bascule "parole -> silence", on envoie explicitement
+ * input_audio_buffer.commit puis response.create. C'est ce qui declenche
+ * la reponse de l'agent de facon fiable.
  */
 (function () {
   const REALTIME_SAMPLE_RATE = 24000;
+  const SILENCE_RMS_THRESHOLD = 0.012;
+  const SILENCE_DURATION_MS = 900;
+  const MIN_SPEECH_DURATION_MS = 250;
 
   const fab = document.getElementById("voice-fab");
   const panel = document.getElementById("voice-panel");
   const closeBtn = document.getElementById("voice-close");
-  const micBtn = document.getElementById("voice-mic");
-  const messagesEl = document.getElementById("voice-messages");
-  const statusEl = document.getElementById("voice-status");
+  const hangupBtn = document.getElementById("voice-mic");
   const statusLineEl = document.getElementById("voice-status-line");
+  const timerEl = document.getElementById("voice-timer");
+  const avatarRing = document.getElementById("voice-avatar-ring");
 
   if (!fab || !panel) {
     return;
@@ -34,22 +38,18 @@
   let micSourceNode = null;
   let micProcessorNode = null;
   let playbackTime = 0;
-  let listening = false;
-  let currentAssistantBubble = null;
-  let currentUserBubble = null;
+  let inCall = false;
+
+  let isSpeaking = false;
+  let speechStartedAt = 0;
+  let silenceStartedAt = null;
+
+  let callStartedAt = null;
+  let timerInterval = null;
 
   fab.addEventListener("click", () => {
     panel.classList.add("open");
-  });
-
-  closeBtn.addEventListener("click", () => {
-    panel.classList.remove("open");
-  });
-
-  micBtn.addEventListener("click", () => {
-    if (listening) {
-      stopConversation();
-    } else {
+    if (!inCall) {
       startConversation().catch((err) => {
         console.error("Erreur agent vocal :", err);
         setStatus("Erreur : " + err.message);
@@ -57,27 +57,45 @@
     }
   });
 
+  closeBtn.addEventListener("click", () => {
+    endCall();
+  });
+
+  hangupBtn.addEventListener("click", () => {
+    endCall();
+  });
+
   function setStatus(text) {
-    statusEl.textContent = text;
+    statusLineEl.textContent = text;
   }
 
-  function addMessage(role, text) {
-    const div = document.createElement("div");
-    div.className = "voice-message " + (role === "user" ? "user" : "assistant");
-    div.textContent = text;
-    messagesEl.appendChild(div);
-    messagesEl.scrollTop = messagesEl.scrollHeight;
-    return div;
+  function startTimer() {
+    callStartedAt = Date.now();
+    updateTimer();
+    timerInterval = setInterval(updateTimer, 500);
+  }
+
+  function updateTimer() {
+    const elapsed = Math.floor((Date.now() - callStartedAt) / 1000);
+    const m = String(Math.floor(elapsed / 60)).padStart(2, "0");
+    const s = String(elapsed % 60).padStart(2, "0");
+    timerEl.textContent = m + ":" + s;
+  }
+
+  function stopTimer() {
+    if (timerInterval) {
+      clearInterval(timerInterval);
+      timerInterval = null;
+    }
   }
 
   async function startConversation() {
-    setStatus("Connexion à l'assistant…");
+    setStatus("Connexion…");
 
     const configResp = await fetch("/api/xai/config");
     const config = await configResp.json();
     if (!config.configured) {
-      setStatus("Agent vocal pas encore configuré côté serveur.");
-      addMessage("assistant", "Désolé, l'agent vocal n'est pas encore activé sur ce site.");
+      setStatus("Agent vocal pas encore configuré.");
       return;
     }
 
@@ -88,12 +106,9 @@
     socket = new WebSocket(wsProtocol + "//" + window.location.host + "/ws/voice");
 
     socket.addEventListener("open", () => {
-      listening = true;
-      micBtn.textContent = "";
-      micBtn.innerHTML = '<i class="bi bi-stop-fill"></i> Arrêter la conversation';
-      micBtn.classList.add("listening");
-      statusLineEl.textContent = "En ligne · Prêt à vous écouter";
-      setStatus("L'IA vous écoute…");
+      inCall = true;
+      setStatus("En communication");
+      startTimer();
       startMicCapture();
     });
 
@@ -108,11 +123,11 @@
     });
 
     socket.addEventListener("close", () => {
-      stopConversation();
+      endCall();
     });
 
     socket.addEventListener("error", () => {
-      setStatus("Erreur de connexion à l'agent vocal.");
+      setStatus("Erreur de connexion.");
     });
   }
 
@@ -124,28 +139,21 @@
       return;
     }
 
-    // Transcript best-effort (noms d'evenements a confirmer avec un test reel) :
-    if (type.includes("transcript") && type.includes("delta") && typeof data.delta === "string") {
-      const isUser = type.includes("input_audio_transcription");
-      if (isUser) {
-        if (!currentUserBubble) currentUserBubble = addMessage("user", "");
-        currentUserBubble.textContent += data.delta;
-      } else {
-        if (!currentAssistantBubble) currentAssistantBubble = addMessage("assistant", "");
-        currentAssistantBubble.textContent += data.delta;
-      }
+    if (type === "response.created") {
+      setStatus("L'assistant répond…");
+      avatarRing.classList.add("speaking");
       return;
     }
 
-    if (type.includes("transcript") && type.includes("completed")) {
-      currentAssistantBubble = null;
-      currentUserBubble = null;
+    if (type === "response.done") {
+      setStatus("En communication");
+      avatarRing.classList.remove("speaking");
       return;
     }
 
     if (type.includes("error")) {
       console.error("Evenement d'erreur x.ai :", data);
-      setStatus("L'assistant a rencontré une erreur.");
+      setStatus("Erreur pendant l'appel.");
     }
   }
 
@@ -160,6 +168,9 @@
         micProcessorNode.onaudioprocess = (event) => {
           if (!socket || socket.readyState !== WebSocket.OPEN) return;
           const input = event.inputBuffer.getChannelData(0);
+
+          detectSpeech(input);
+
           const resampled = resampleTo24k(input, audioContext.sampleRate);
           const pcm16 = floatTo16BitPCM(resampled);
           const base64Audio = arrayBufferToBase64(pcm16.buffer);
@@ -174,12 +185,53 @@
       });
   }
 
-  function stopConversation() {
-    listening = false;
-    micBtn.innerHTML = '<i class="bi bi-mic-fill"></i> Parler à notre conseiller';
-    micBtn.classList.remove("listening");
-    statusLineEl.textContent = "Hors ligne";
-    setStatus("Prêt à vous écouter");
+  /**
+   * VAD (voice activity detection) simple base sur l'energie du signal.
+   * Bascule parole -> silence prolonge => on demande explicitement une
+   * reponse, plutot que de dependre d'une detection cote serveur.
+   */
+  function detectSpeech(samples) {
+    let sumSquares = 0;
+    for (let i = 0; i < samples.length; i++) {
+      sumSquares += samples[i] * samples[i];
+    }
+    const rms = Math.sqrt(sumSquares / samples.length);
+    const now = performance.now();
+
+    if (rms > SILENCE_RMS_THRESHOLD) {
+      if (!isSpeaking) {
+        isSpeaking = true;
+        speechStartedAt = now;
+        setStatus("Je vous écoute…");
+      }
+      silenceStartedAt = null;
+    } else if (isSpeaking) {
+      if (silenceStartedAt === null) {
+        silenceStartedAt = now;
+      } else if (now - silenceStartedAt > SILENCE_DURATION_MS) {
+        isSpeaking = false;
+        silenceStartedAt = null;
+        if (now - speechStartedAt > MIN_SPEECH_DURATION_MS) {
+          commitAndRespond();
+        }
+      }
+    }
+  }
+
+  function commitAndRespond() {
+    if (!socket || socket.readyState !== WebSocket.OPEN) return;
+    socket.send(JSON.stringify({ type: "input_audio_buffer.commit" }));
+    socket.send(JSON.stringify({ type: "response.create" }));
+  }
+
+  function endCall() {
+    if (!inCall && !socket) {
+      panel.classList.remove("open");
+      return;
+    }
+    inCall = false;
+    stopTimer();
+    setStatus("Appel terminé");
 
     if (micProcessorNode) {
       micProcessorNode.disconnect();
@@ -201,6 +253,8 @@
       }
       socket = null;
     }
+
+    setTimeout(() => panel.classList.remove("open"), 400);
   }
 
   // --- Utilitaires audio (PCM16 / 24kHz, format attendu par l'API temps reel) ---
