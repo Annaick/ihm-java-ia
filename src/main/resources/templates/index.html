@@ -5,11 +5,36 @@
 <header th:replace="~{fragments/layout :: appbar}"></header>
 
 <section class="hero">
-    <h1>Un conseiller à votre écoute, même à 23h un dimanche.</h1>
-    <p>Notre agent vocal qualifie votre projet immobilier et vous obtient un rendez-vous
-        avec un agent de l'agence, 24h/24 — sans attendre l'ouverture.</p>
-    <a class="btn" href="#">Parler à notre conseiller</a>
+    <div>
+        <span class="badge"><span class="dot"></span> Conseiller vocal IA actif 24h/24 · 7j/7</span>
+        <h1>Un conseiller à votre écoute, même à 23h un dimanche.</h1>
+        <p>Horizon Immo réinvente la recherche immobilière. Notre intelligence artificielle
+            qualifie vos envies de vive voix et planifie instantanément vos visites avec
+            nos agents humains locaux.</p>
+        <button type="button" class="btn" onclick="document.getElementById('voice-fab').click()">
+            Parler à notre conseiller
+        </button>
+    </div>
+    <img src="https://picsum.photos/seed/horizonhero/800/560" alt="Maison mise en avant"/>
 </section>
+
+<div class="reassurance">
+    <div class="card">
+        <div class="icon">🕐</div>
+        <h4>Disponible 24h/24</h4>
+        <p>Une question tardive ? Une estimation urgente ? Notre IA vous répond de vive voix à toute heure.</p>
+    </div>
+    <div class="card">
+        <div class="icon">⚡</div>
+        <h4>Réponse immédiate</h4>
+        <p>Fini l'attente par mail. Vos critères sont qualifiés instantanément, de façon naturelle.</p>
+    </div>
+    <div class="card">
+        <div class="icon">✅</div>
+        <h4>Rendez-vous garanti</h4>
+        <p>Dès que vos critères sont analysés, un rendez-vous est bloqué avec un agent de l'agence.</p>
+    </div>
+</div>
 
 <main>
     <h2 class="section-title">Biens à la une</h2>
@@ -27,7 +52,8 @@
     </div>
 </main>
 
-<a th:replace="~{fragments/layout :: voice-fab}"></a>
+<div th:replace="~{fragments/layout :: voice-widget}"></div>
 <footer th:replace="~{fragments/layout :: footer}"></footer>
+<script th:src="@{/js/voice-agent.js}"></script>
 </body>
 </html>

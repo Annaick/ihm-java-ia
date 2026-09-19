@@ -7,6 +7,9 @@
         <div class="logo">Horizon Immo</div>
         <a class="active" th:href="@{/backoffice}">Leads</a>
         <a th:href="@{/}">Retour au site</a>
+        <form method="post" th:action="@{/backoffice/logout}">
+            <button type="submit" style="background:none;border:none;color:inherit;padding:12px 24px;cursor:pointer;text-align:left;width:100%;">Se déconnecter</button>
+        </form>
     </nav>
     <div class="backoffice-content">
         <h1 class="section-title">Demandes de rendez-vous</h1>

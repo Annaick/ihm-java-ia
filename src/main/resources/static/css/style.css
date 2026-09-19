@@ -1,12 +1,13 @@
 :root {
-  --primary: #1b4965;
-  --primary-dark: #123047;
+  --primary: #6c4fd6;
+  --primary-dark: #4b32a8;
+  --primary-light: #f0ecfb;
   --surface: #ffffff;
-  --surface-alt: #f4f6f8;
-  --on-surface: #1c1c1c;
-  --on-surface-variant: #5a6570;
-  --outline: #d8dee3;
-  --radius: 12px;
+  --surface-alt: #f7f5fc;
+  --on-surface: #221d33;
+  --on-surface-variant: #675e7d;
+  --outline: #e1dbf3;
+  --radius: 14px;
 }
 
 * {
@@ -53,21 +54,85 @@ a {
 }
 
 .hero {
-  padding: 64px 32px;
-  text-align: center;
-  background: linear-gradient(180deg, var(--surface) 0%, var(--surface-alt) 100%);
+  padding: 56px 32px;
+  background: linear-gradient(180deg, var(--surface) 0%, var(--primary-light) 100%);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.hero .badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--primary-light);
+  color: var(--primary-dark);
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.hero .badge .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #2ecc71;
+  display: inline-block;
 }
 
 .hero h1 {
   font-size: 2.2rem;
-  color: var(--primary-dark);
-  margin-bottom: 12px;
+  color: var(--on-surface);
+  margin: 0 0 16px;
 }
 
 .hero p {
   color: var(--on-surface-variant);
-  max-width: 560px;
-  margin: 0 auto 24px;
+  max-width: 480px;
+  margin: 0 0 24px;
+}
+
+.hero img {
+  width: 100%;
+  border-radius: var(--radius);
+  display: block;
+  object-fit: cover;
+}
+
+.reassurance {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 32px 40px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.reassurance .card {
+  background: var(--surface);
+  border: 1px solid var(--outline);
+  border-radius: var(--radius);
+  padding: 20px;
+}
+
+.reassurance .card .icon {
+  font-size: 1.3rem;
+  margin-bottom: 8px;
+}
+
+.reassurance .card h4 {
+  margin: 0 0 6px;
+}
+
+.reassurance .card p {
+  margin: 0;
+  color: var(--on-surface-variant);
+  font-size: 0.9rem;
 }
 
 .btn {
@@ -203,7 +268,7 @@ footer {
 .backoffice-nav a {
   display: block;
   padding: 12px 24px;
-  color: #cfe0ea;
+  color: #dcd2f7;
   text-decoration: none;
 }
 
@@ -241,8 +306,8 @@ table.leads td {
 }
 
 .status-chip.NOUVEAU {
-  background: #fde8d0;
-  color: #8a4b00;
+  background: var(--primary-light);
+  color: var(--primary-dark);
 }
 
 .status-chip.CONFIRME {
@@ -283,4 +348,202 @@ table.leads td {
   margin-top: 20px;
   display: flex;
   gap: 12px;
+}
+
+/* Login backoffice */
+.login-shell {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--primary-light);
+}
+
+.login-card {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 32px;
+  width: 100%;
+  max-width: 360px;
+  box-shadow: 0 12px 32px rgba(75, 50, 168, 0.15);
+}
+
+.login-card h1 {
+  font-size: 1.3rem;
+  margin: 0 0 4px;
+  color: var(--primary-dark);
+}
+
+.login-card p.subtitle {
+  color: var(--on-surface-variant);
+  margin: 0 0 20px;
+  font-size: 0.9rem;
+}
+
+.login-card label {
+  display: block;
+  font-size: 0.85rem;
+  margin-bottom: 6px;
+  color: var(--on-surface-variant);
+}
+
+.login-card input {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--outline);
+  margin-bottom: 16px;
+}
+
+.login-card .btn {
+  width: 100%;
+  text-align: center;
+}
+
+.login-error {
+  background: #fde8ea;
+  color: #a3213a;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  margin-bottom: 16px;
+}
+
+/* Widget agent vocal */
+.voice-fab {
+  z-index: 40;
+}
+
+.voice-panel {
+  position: fixed;
+  right: 28px;
+  bottom: 28px;
+  width: 380px;
+  max-width: calc(100vw - 32px);
+  max-height: 70vh;
+  background: var(--surface);
+  border-radius: 18px;
+  box-shadow: 0 20px 50px rgba(34, 29, 51, 0.25);
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+  z-index: 50;
+}
+
+.voice-panel.open {
+  display: flex;
+}
+
+.voice-panel .voice-header {
+  background: var(--primary);
+  color: #fff;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.voice-panel .voice-header .avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+}
+
+.voice-panel .voice-header .titles {
+  flex: 1;
+}
+
+.voice-panel .voice-header .titles strong {
+  display: block;
+  font-size: 0.95rem;
+}
+
+.voice-panel .voice-header .titles span {
+  font-size: 0.78rem;
+  opacity: 0.85;
+}
+
+.voice-panel .voice-header button.close {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 1.1rem;
+  cursor: pointer;
+}
+
+.voice-panel .voice-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: var(--surface-alt);
+}
+
+.voice-message {
+  max-width: 85%;
+  padding: 10px 14px;
+  border-radius: 14px;
+  font-size: 0.88rem;
+  line-height: 1.35;
+}
+
+.voice-message.assistant {
+  align-self: flex-start;
+  background: var(--surface);
+  border: 1px solid var(--outline);
+}
+
+.voice-message.user {
+  align-self: flex-end;
+  background: var(--primary-light);
+  color: var(--primary-dark);
+}
+
+.voice-rdv-card {
+  border: 1px solid var(--primary);
+  border-radius: var(--radius);
+  padding: 14px;
+  background: var(--surface);
+}
+
+.voice-rdv-card .label {
+  color: var(--primary);
+  font-weight: 700;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.voice-panel .voice-footer {
+  padding: 14px 16px;
+  border-top: 1px solid var(--outline);
+  text-align: center;
+}
+
+.voice-panel .voice-status {
+  color: var(--primary);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.voice-panel .mic-button {
+  margin-top: 10px;
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.voice-panel .mic-button.listening {
+  background: #d63447;
 }

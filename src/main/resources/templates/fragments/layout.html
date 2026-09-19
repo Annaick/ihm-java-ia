@@ -10,15 +10,39 @@
 </head>
 <body>
 <header class="app-bar" th:fragment="appbar">
-    <a class="logo" th:href="@{/}">Horizon Immo</a>
+    <a class="logo" th:href="@{/}">🏠 Horizon Immo</a>
     <nav>
         <a th:href="@{/}">Accueil</a>
         <a th:href="@{/annonces}">Annonces</a>
-        <a class="backoffice-link" th:href="@{/backoffice}">Espace agent</a>
+        <a class="backoffice-link" th:href="@{/backoffice}">Accès Agent Backoffice</a>
     </nav>
 </header>
 
-<a th:fragment="voice-fab" class="voice-fab" href="#" title="Parler à notre conseiller">🎙️</a>
+<div th:fragment="voice-widget">
+    <button id="voice-fab" class="voice-fab" type="button" title="Parler à notre conseiller">🎙️</button>
+
+    <div id="voice-panel" class="voice-panel">
+        <div class="voice-header">
+            <div class="avatar">🏠</div>
+            <div class="titles">
+                <strong>Assistant Vocal Horizon</strong>
+                <span id="voice-status-line">Hors ligne</span>
+            </div>
+            <button type="button" class="close" id="voice-close">✕</button>
+        </div>
+        <div class="voice-messages" id="voice-messages">
+            <div class="voice-message assistant">
+                Bonjour ! Cliquez sur le micro pour me parler de votre projet immobilier —
+                je peux qualifier votre besoin et vous obtenir un rendez-vous avec un agent,
+                même en dehors des horaires d'ouverture.
+            </div>
+        </div>
+        <div class="voice-footer">
+            <div class="voice-status" id="voice-status">Prêt à vous écouter</div>
+            <button type="button" id="voice-mic" class="mic-button">🎙️ Parler à notre conseiller</button>
+        </div>
+    </div>
+</div>
 
 <footer th:fragment="footer">
     <p>Horizon Immo — Agence immobilière · Ouverte du lundi au samedi, 9h-19h.<br/>
