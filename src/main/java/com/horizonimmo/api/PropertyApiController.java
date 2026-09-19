@@ -23,10 +23,10 @@ public class PropertyApiController {
 
     @GetMapping("/api/properties")
     public List<Property> search(
-            @RequestParam(required = false) TransactionType transactionType,
+            @RequestParam(required = false) String transactionType,
             @RequestParam(required = false) String zone,
             @RequestParam(required = false) String propertyType,
             @RequestParam(required = false) Integer maxPrice) {
-        return propertyService.search(transactionType, zone, propertyType, maxPrice);
+        return propertyService.search(TransactionType.parseLoose(transactionType), zone, propertyType, maxPrice);
     }
 }

@@ -2,6 +2,7 @@ package com.horizonimmo.api;
 
 import com.horizonimmo.api.dto.LeadCreateRequest;
 import com.horizonimmo.model.Lead;
+import com.horizonimmo.model.TransactionType;
 import com.horizonimmo.service.LeadService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -31,7 +32,7 @@ public class LeadApiController {
         lead.setProspectName(request.getProspectName());
         lead.setProspectPhone(request.getProspectPhone());
         lead.setProspectEmail(request.getProspectEmail());
-        lead.setTransactionType(request.getTransactionType());
+        lead.setTransactionType(TransactionType.parseLoose(request.getTransactionType()));
         lead.setBudget(request.getBudget());
         lead.setZone(request.getZone());
         lead.setPropertyType(request.getPropertyType());

@@ -1,12 +1,17 @@
 package com.horizonimmo.api.dto;
 
-import com.horizonimmo.model.TransactionType;
 import jakarta.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 
 /**
  * Payload envoye par l'agent vocal x.ai une fois le besoin qualifie et le
  * rendez-vous propose au prospect.
+ *
+ * transactionType reste une String ici (pas l'enum TransactionType
+ * directement) : l'agent vocal peut envoyer une casse ou un mot different
+ * ("location", "louer"...), et on ne veut pas qu'une 400 de desserialisation
+ * fasse echouer toute la creation du lead pour ce detail. Voir
+ * TransactionType.parseLoose(), applique dans LeadApiController.
  */
 public class LeadCreateRequest {
 
@@ -17,7 +22,7 @@ public class LeadCreateRequest {
     private String prospectPhone;
 
     private String prospectEmail;
-    private TransactionType transactionType;
+    private String transactionType;
     private Integer budget;
     private String zone;
     private String propertyType;
@@ -50,11 +55,11 @@ public class LeadCreateRequest {
         this.prospectEmail = prospectEmail;
     }
 
-    public TransactionType getTransactionType() {
+    public String getTransactionType() {
         return transactionType;
     }
 
-    public void setTransactionType(TransactionType transactionType) {
+    public void setTransactionType(String transactionType) {
         this.transactionType = transactionType;
     }
 
