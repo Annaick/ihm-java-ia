@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:fragment="pagehead(title)">
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1"/>
+        <title th:text="${title} + ' - Horizon Immo'">Horizon Immo</title>
+        <link rel="stylesheet" th:href="@{/css/style.css}"/>
+    </th:block>
+</head>
+<body>
+<header class="app-bar" th:fragment="appbar">
+    <a class="logo" th:href="@{/}">Horizon Immo</a>
+    <nav>
+        <a th:href="@{/}">Accueil</a>
+        <a th:href="@{/annonces}">Annonces</a>
+        <a class="backoffice-link" th:href="@{/backoffice}">Espace agent</a>
+    </nav>
+</header>
+
+<a th:fragment="voice-fab" class="voice-fab" href="#" title="Parler à notre conseiller">🎙️</a>
+
+<footer th:fragment="footer">
+    <p>Horizon Immo — Agence immobilière · Ouverte du lundi au samedi, 9h-19h.<br/>
+        Notre conseiller vocal, lui, répond 24h/24.</p>
+</footer>
+</body>
+</html>

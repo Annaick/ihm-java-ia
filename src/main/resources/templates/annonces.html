@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: pagehead('Annonces')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: appbar}"></header>
+
+<main>
+    <h2 class="section-title">Toutes nos annonces</h2>
+
+    <form class="filter-bar" method="get" th:action="@{/annonces}">
+        <select name="transactionType">
+            <option value="">Achat ou location</option>
+            <option value="VENTE" th:selected="${transactionType != null and transactionType.name() == 'VENTE'}">Achat</option>
+            <option value="LOCATION" th:selected="${transactionType != null and transactionType.name() == 'LOCATION'}">Location</option>
+        </select>
+        <input type="text" name="zone" placeholder="Quartier" th:value="${zone}"/>
+        <input type="text" name="propertyType" placeholder="Type de bien" th:value="${propertyType}"/>
+        <input type="number" name="maxPrice" placeholder="Budget max" th:value="${maxPrice}"/>
+        <button class="btn secondary" type="submit">Filtrer</button>
+    </form>
+
+    <div class="property-grid">
+        <div class="property-card" th:each="p : ${properties}">
+            <img th:src="${p.photoUrl}" alt=""/>
+            <div class="content">
+                <h3 th:text="${p.title}">Titre du bien</h3>
+                <div class="price" th:text="${p.price} + ' €'">Prix</div>
+                <div class="meta" th:text="${p.city} + ' · ' + ${p.zone} + ' · ' + ${p.rooms} + ' pièces · ' + ${p.surface} + ' m²'">
+                    Meta
+                </div>
+            </div>
+        </div>
+        <p th:if="${properties.isEmpty()}">Aucun bien ne correspond à ces critères pour le moment.</p>
+    </div>
+</main>
+
+<a th:replace="~{fragments/layout :: voice-fab}"></a>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: pagehead('Detail du lead')}"></head>
+<body>
+<div class="backoffice-shell">
+    <nav class="backoffice-nav">
+        <div class="logo">Horizon Immo</div>
+        <a class="active" th:href="@{/backoffice}">Leads</a>
+        <a th:href="@{/}">Retour au site</a>
+    </nav>
+    <div class="backoffice-content">
+        <h1 class="section-title" th:text="${lead.prospectName}">Nom du prospect</h1>
+
+        <div class="lead-detail-card">
+            <span class="status-chip" th:classappend="${lead.status}" th:text="${lead.status}">Statut</span>
+
+            <dl>
+                <dt>Téléphone</dt>
+                <dd th:text="${lead.prospectPhone}">Téléphone</dd>
+                <dt>Email</dt>
+                <dd th:text="${lead.prospectEmail}">Email</dd>
+                <dt>Transaction</dt>
+                <dd th:text="${lead.transactionType}">Transaction</dd>
+                <dt>Type de bien</dt>
+                <dd th:text="${lead.propertyType}">Type</dd>
+                <dt>Zone</dt>
+                <dd th:text="${lead.zone}">Zone</dd>
+                <dt>Budget</dt>
+                <dd th:text="${lead.budget} + ' €'">Budget</dd>
+                <dt>Pièces souhaitées</dt>
+                <dd th:text="${lead.roomsWanted}">Pièces</dd>
+                <dt>Délai du projet</dt>
+                <dd th:text="${lead.timeline}">Délai</dd>
+                <dt>Créneau souhaité</dt>
+                <dd th:text="${lead.requestedSlot}">Créneau</dd>
+            </dl>
+
+            <div class="summary">
+                <strong>Résumé de la conversation avec l'agent vocal</strong>
+                <p th:text="${lead.conversationSummary}">Résumé</p>
+            </div>
+
+            <div class="actions">
+                <form method="post" th:action="@{/backoffice/leads/{id}/statut(id=${lead.id})}">
+                    <input type="hidden" name="status" value="CONFIRME"/>
+                    <button class="btn" type="submit">Confirmer le rendez-vous</button>
+                </form>
+                <form method="post" th:action="@{/backoffice/leads/{id}/statut(id=${lead.id})}">
+                    <input type="hidden" name="status" value="TRAITE"/>
+                    <button class="btn secondary" type="submit">Marquer comme traité</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

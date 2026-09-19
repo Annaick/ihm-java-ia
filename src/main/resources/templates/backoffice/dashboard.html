@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: pagehead('Backoffice')}"></head>
+<body>
+<div class="backoffice-shell">
+    <nav class="backoffice-nav">
+        <div class="logo">Horizon Immo</div>
+        <a class="active" th:href="@{/backoffice}">Leads</a>
+        <a th:href="@{/}">Retour au site</a>
+    </nav>
+    <div class="backoffice-content">
+        <h1 class="section-title">Demandes de rendez-vous</h1>
+        <table class="leads">
+            <thead>
+            <tr>
+                <th>Prospect</th>
+                <th>Besoin</th>
+                <th>Créneau souhaité</th>
+                <th>Statut</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="lead : ${leads}">
+                <td>
+                    <a th:href="@{/backoffice/leads/{id}(id=${lead.id})}" th:text="${lead.prospectName}">Nom</a>
+                </td>
+                <td th:text="${lead.transactionType} + ' · ' + ${lead.propertyType} + ' · ' + ${lead.zone} + ' · ' + ${lead.budget} + ' €'">
+                    Besoin
+                </td>
+                <td th:text="${lead.requestedSlot}">Créneau</td>
+                <td>
+                    <span class="status-chip" th:classappend="${lead.status}" th:text="${lead.status}">Statut</span>
+                </td>
+            </tr>
+            <tr th:if="${leads.isEmpty()}">
+                <td colspan="4">Aucune demande pour le moment.</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>

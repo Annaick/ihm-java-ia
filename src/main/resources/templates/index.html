@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: pagehead('Accueil')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: appbar}"></header>
+
+<section class="hero">
+    <h1>Un conseiller à votre écoute, même à 23h un dimanche.</h1>
+    <p>Notre agent vocal qualifie votre projet immobilier et vous obtient un rendez-vous
+        avec un agent de l'agence, 24h/24 — sans attendre l'ouverture.</p>
+    <a class="btn" href="#">Parler à notre conseiller</a>
+</section>
+
+<main>
+    <h2 class="section-title">Biens à la une</h2>
+    <div class="property-grid">
+        <div class="property-card" th:each="p : ${properties}">
+            <img th:src="${p.photoUrl}" alt=""/>
+            <div class="content">
+                <h3 th:text="${p.title}">Titre du bien</h3>
+                <div class="price" th:text="${p.price} + ' €'">Prix</div>
+                <div class="meta" th:text="${p.city} + ' · ' + ${p.zone} + ' · ' + ${p.rooms} + ' pièces · ' + ${p.surface} + ' m²'">
+                    Meta
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<a th:replace="~{fragments/layout :: voice-fab}"></a>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>
