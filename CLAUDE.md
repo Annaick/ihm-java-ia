@@ -22,7 +22,11 @@ l'agence.
 ## Architecture cible (à affiner au fil du projet)
 
 - **Frontend vitrine** : présentation de l'agence, biens en vente/location,
-  widget d'agent vocal accessible sur le site.
+  widget d'agent vocal accessible sur le site. Structure UX inspirée d'un
+  portail immobilier classique (hero + recherche superposée, catalogue avec
+  sidebar de filtres, fiche bien dynamique `/annonces/{id}`) — design, code,
+  textes et images 100% originaux, palette violet + terracotta, icônes
+  Bootstrap Icons, typographie Fraunces/système.
 - **Backoffice** : interface pour les agents humains — liste des leads/RDV
   générés par l'agent vocal, gestion des biens.
 - **Backend Java web client-serveur** : **Spring Boot** (Java 21, Maven,
@@ -75,8 +79,11 @@ l'agence.
 
 1. `UX Research.xlsx` (fait, dans `ihm/`) — pitch produit, 2 personas,
    parcours utilisateur, en français.
-2. Maquettes / design (fait, généré par l'agent IA de Figma à partir de
-   `ihm/brief-design-figma-ai.md`, export dans `ihm/design export/`).
+2. Maquettes / design — premier jet généré par l'agent IA de Figma (export
+   dans `ihm/design export/`), **remplacé depuis par une refonte codée
+   directement** (voir `PROGRESS.md` § "refonte du design"). Le fichier
+   Figma reste à mettre à jour pour refléter cette nouvelle direction
+   (demande explicite de l'utilisateur, pas encore faite).
 3. Code Java (fait) — Spring Boot + SQLite, site vitrine + backoffice avec
    authentification (voir Structure du code).
 4. Intégration de l'agent vocal x.ai (fait côté code, **pas encore testée

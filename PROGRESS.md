@@ -197,3 +197,46 @@
    comme pour les autres projets.
 3. Changer le mot de passe admin backoffice avant tout usage réel (fait pour
    la démo, pas pour la prod).
+
+## 2026-09-19 (refonte du design)
+
+- Premier design jugé trop générique/"IA" (violet omniprésent, emojis,
+  aucune animation, lien backoffice public). Refonte complète :
+  - Palette élargie : violet (marque) + terracotta (accent/CTA) + fond
+    crème, au lieu du tout-violet.
+  - Typographie : titres en serif (Fraunces via Google Fonts) + corps en
+    police système, pour sortir du look "SaaS générique".
+  - Emojis remplacés par un pack d'icônes (Bootstrap Icons, via CDN).
+  - Animation : pulsation continue sur le bouton de l'agent vocal (FAB)
+    pour attirer l'œil, transitions au survol sur boutons/cartes.
+  - Lien "Accès Agent Backoffice" retiré de la navigation publique
+    (convention façon WordPress : l'agent va directement sur `/backoffice`,
+    qui reste protégé par Spring Security).
+  - Vraies photos immobilières utilisées (fournies par l'utilisateur dans
+    `ihm/images/`) à la place des placeholders picsum.photos.
+  - **Architecture repensée en s'inspirant de la structure UX d'un portail
+    immobilier de référence** (`vacation-rentals.realhomes.io`, un thème
+    WordPress commercial) : **structure et principes repris (hero plein
+    cadre + barre de recherche superposée, sidebar de filtres sur le
+    catalogue, fiche bien dédiée), mais design, code, textes et images 100%
+    originaux** — pas de code/CSS/images/texte copiés du site de référence
+    (question de droits d'auteur sur un thème commercial).
+  - **Nouvelle page dynamique `/annonces/{id}`** : fiche bien complète
+    (photo, prix, caractéristiques, description, biens similaires).
+  - Filtres repensés : formulaire de recherche sur l'accueil (transaction,
+    quartier, type, budget) + sidebar filtrable sur le catalogue (types de
+    biens dynamiques depuis la base, budget, quartier).
+- Vérifié visuellement dans un vrai navigateur (Claude in Chrome) : accueil,
+  catalogue, fiche bien — tout s'affiche et se filtre correctement.
+- Redéployé en production : https://immobilier.anaick.com reflète le nouveau
+  design.
+- **Rappel** : l'utilisateur veut mettre à jour le design Figma pour qu'il
+  corresponde à cette nouvelle direction visuelle, une fois validée.
+
+## Prochaine étape
+
+- Recueillir le retour de l'utilisateur sur cette nouvelle direction visuelle.
+- Si validée : mettre à jour le design Figma pour y correspondre (à la
+  demande de l'utilisateur).
+- Toujours en attente : clé x.ai, job Jenkins (voir "À faire par
+  l'utilisateur" ci-dessus).
